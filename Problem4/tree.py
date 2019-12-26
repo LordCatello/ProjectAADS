@@ -28,3 +28,6 @@ class Tree():
 
     def update_vertex_count(self,new_vertex_count):
         self._vertex_cover_count=new_vertex_count
+
+    def get_label(self):
+        return self._label

@@ -19,7 +19,7 @@ def VertexCover(r):
             VCout += VertexCover(grandchild)
 
     vertex_cover= min(VCin,VCout)
-    r.update_vertex_cover(vertex_cover)
+    r.update_vertex_count(vertex_cover)
     if(vertex_cover==VCin):
-        r.change_label='in'
+        r.change_label('in')
     return vertex_cover
