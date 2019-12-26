@@ -1,24 +1,30 @@
 
 class Tree():
 
-    __slots__ = '_element', '_children'
+    __slots__ = '_vertex_cover_count', '_children','_label'
 
-    def __init__(self,element=None):
+    def __init__(self,element=None,label='out'):
         self._children = []
-        self._element=element
+        self._vertex_cover_count=element
+        self._label=label
 
     def element(self):
-        return self._element
+        return self._vertex_cover_count
 
     def num_children(self):
         return len(self._children)
 
     def children(self):
+        if len(self._children)==0:
+            return None
         for p in self._children:
             yield p
+
+    def change_label(self,new_label):
+        self._label=new_label
 
     def add_child(self,child):
         self._children.append(child)
 
-    def update_element(self,new_element):
-        self._element=new_element
+    def update_vertex_count(self,new_vertex_count):
+        self._vertex_cover_count=new_vertex_count
