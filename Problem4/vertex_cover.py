@@ -10,7 +10,7 @@ def VertexCover(tree):
         tree.set_element('out')
         return 0
 
-    if 
+    if
 
     VCin = 1
     for child in r.children():
