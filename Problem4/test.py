@@ -1,6 +1,7 @@
 from random import randint
 from tree import Tree
 import vertex_cover
+from vertex_cover import VertexCoverv2
 # max_height is the maximum height of the tree, max_num_children is the maximum number of children
 # that each tree can have
 from vertex_cover import VertexCover
@@ -54,7 +55,9 @@ def build_tree():
 
 tree=build_tree()
 print_tree(tree)
-print(VertexCover(tree))
+vertex_cover={}
+print(VertexCoverv2(tree, vertex_cover))
+print(vertex_cover)
 print_tree(tree)
 
 

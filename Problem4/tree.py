@@ -31,3 +31,6 @@ class Tree():
 
     def get_label(self):
         return self._label
+
+    def get_vertex_count(self):
+        return self._vertex_cover_count
