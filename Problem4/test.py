@@ -1,64 +1,51 @@
-# 27/12/19
+# 27/12/2019
 
 from random import randint
+from queue import Queue
+
 from tree import Tree
-import vertex_cover
-from vertex_cover import VertexCoverv2
-# max_height is the maximum height of the tree, max_num_children is the maximum number of children
-# that each tree can have
-from vertex_cover import VertexCover
+from vertex_cover_tree import vertex_cover_tree
 
 
-def print_tree(t):
-    queue = [t]
-    num_children = 0
-    accumulator = 0
-    i=0
-    while len(queue) > 0:
-        current = queue.pop(0)
-        print("     ", current.get_label(), "   ", end=" ")
-        num_children -= 1
-        for child in current.children():
-            queue.append(child)
+"""
+It builds a tree randomly
+    
+It builds a tree with as many nodes as specified in the parameters.
+The number of childs of a node is chosen randomly between 1 and max_number_children
+    
+:param  number_nodes:           The number of nodes that the tree must have.
 
-        if(num_children!=0):
-            accumulator+= current.num_children()
+:param  max_number_children     The maximum number of children that a node can have
 
-        if(num_children==0):
-            num_children = accumulator
-            accumulator=0
-            print('')
-        if(i==0):
-            i=1
-            num_children=current.num_children()
-            print('')
+:return                         A tree built in according to the parameters.
 
-
-def build_tree():
+"""
+def build_random_tree(number_nodes=10, max_number_children=5):
     tree = Tree()
-    child1 = Tree()
-    child2 = Tree()
-    child3 = Tree()
-    child4 = Tree()
-    child5 = Tree()
-    child6 = Tree()
-    child7 = Tree()
-    child8 = Tree()
+    queue = Queue()
 
-    tree.add_child(child1)
-    tree.add_child(child2)
-    tree.add_child(child3)
-    child1.add_child(child4)
-    child1.add_child(child5)
-    child2.add_child(child6)
-    child3.add_child(child7)
-    child3.add_child(child8)
+    nodes_count = 1
+    queue.put(tree)
+
+    while nodes_count < number_nodes:
+        element = queue.get()
+        number_children = randint(1, max_number_children)
+        children_count = 0
+
+        while nodes_count < number_nodes and children_count < number_children:
+            child = Tree()
+            element.add_child(child)
+            queue.put(child)
+            children_count += 1
+            nodes_count += 1
     return tree
 
 
-tree = build_tree()
-print_tree(tree)
-vertex_cover = {}
-print(VertexCoverv2(tree, vertex_cover))
-print(vertex_cover)
-print_tree(tree)
+tree = build_random_tree(30, 5)
+tree.dump()
+vertex_cover_tree(tree)
+tree.dump()
+
+# vertex_cover = {}
+# print(VertexCoverv2(tree, vertex_cover))
+# print(vertex_cover)
