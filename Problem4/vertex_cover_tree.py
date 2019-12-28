@@ -42,6 +42,8 @@ def vertex_cover_tree(tree: Tree) -> int:
         for child in tree.get_children():
             # at this point is_include is certainly not None because the children are been
             # previously evaluated
+            # in this case we are explictly inserting children in the vertex cover
+            # in case they were not in the vertex cover we sum 1 to their vertex cover (themselves)
             if not child.is_included():
                 child.add_to_vertex_cover(child.get_count()+1)
 
