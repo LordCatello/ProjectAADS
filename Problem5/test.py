@@ -55,10 +55,8 @@ graph.dump()
 """
 
 # test approx_vertex_cover
-graph = build_random_graph(100, 0.1)
-graph.dump()
-count = vertex_cover.approx_vertex_cover(graph)
-graph.dump()
+graph = build_random_graph(10, 0.5)
+count = vertex_cover.vertex_cover(graph)
 print(count)
 print(is_vertex_cover_correct(graph))
 graph.graphic_dump()
