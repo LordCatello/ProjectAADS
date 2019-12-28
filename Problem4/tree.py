@@ -1,5 +1,6 @@
 # 27/12/2019
 
+from __future__ import annotations
 from queue import Queue
 
 
@@ -17,22 +18,22 @@ class Tree:
                         
     :param count:       It indicates the number of nodes of the tree included in the vertex cover.                                   
     """
-    def __init__(self, included=None, count=0):
+    def __init__(self, included: bool = None, count: int = 0):
         self.__children = []
         self.__included = included
         self.__count = count
 
-    def get_children(self):
+    def get_children(self) -> Tree:
         for c in self.__children:
             yield c
 
-    def get_num_children(self):
+    def get_num_children(self) -> int:
         return len(self.__children)
 
-    def add_child(self, child):
+    def add_child(self, child: Tree):
         self.__children.append(child)
 
-    def is_included(self):
+    def is_included(self) -> bool:
         return self.__included
 
     """
@@ -43,7 +44,7 @@ class Tree:
 
     :param count: it is the number of nodes of this tree added to the vertex cover, including this node.                
     """
-    def add_to_vertex_cover(self, count):
+    def add_to_vertex_cover(self, count: int):
         self.__included = True
         self.__count = count
 
@@ -55,7 +56,7 @@ class Tree:
 
     :param count: it is the number of nodes of this tree added to the vertex cover, including this node.                
     """
-    def remove_from_vertex_cover(self, count):
+    def remove_from_vertex_cover(self, count: int):
         self.__included = False
         self.__count = count
 

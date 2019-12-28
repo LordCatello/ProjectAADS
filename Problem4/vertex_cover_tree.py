@@ -1,5 +1,6 @@
 # 27/12/2019
 
+from tree import Tree
 
 """
 It evaluates the minimum vertex cover of a tree.
@@ -10,7 +11,7 @@ It evaluates the minimum vertex cover of the tree passed as parameter
 
 :return      the number of nodes added to the vertex cover.
 """
-def vertex_cover_tree(tree):
+def vertex_cover_tree(tree: Tree) -> int:
     if tree is None:
         return 0
 

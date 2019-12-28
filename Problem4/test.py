@@ -20,7 +20,7 @@ The number of childs of a node is chosen randomly between 1 and max_number_child
 :return                         A tree built in according to the parameters.
 
 """
-def build_random_tree(number_nodes=10, max_number_children=5):
+def build_random_tree(number_nodes: int = 10, max_number_children: int = 5) -> Tree:
     tree = Tree()
     queue = Queue()
 
