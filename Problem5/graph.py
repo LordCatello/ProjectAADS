@@ -1,3 +1,5 @@
+import networkx as nx
+import matplotlib.pyplot as plt
 class Graph:
   """Representation of a simple graph using an adjacency map."""
 
@@ -156,3 +158,26 @@ class Graph:
 
     print("number of vertices: ", self.vertex_count())
     print("number of edges: ", self.edge_count())
+
+  def graphic_dump(self):
+    G=nx.Graph()
+    vertex_color=[]
+    for v in self.vertices():
+      G.add_node(v)
+      if(v.element() == False):
+        vertex_color.append('red')
+      elif(v.element() == True):
+        vertex_color.append('blue')
+      else:
+        vertex_color.append('orange')
+
+    for e in self.edges():
+      (u,v) = e.endpoints()
+      G.add_edge(u,v)
+
+    nx.draw(G,node_color=vertex_color)
+    plt.show()
+
+
+
+

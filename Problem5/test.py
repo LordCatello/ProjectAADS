@@ -45,5 +45,7 @@ def test_is_vertex_cover_correct() -> bool:
 print(test_is_vertex_cover_correct())
 
 # test build_random_graph function
-graph = build_random_graph(1000, 0.5)
+graph = build_random_graph(20, 0.5)
 graph.dump()
+
+graph.graphic_dump()
