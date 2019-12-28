@@ -19,22 +19,31 @@ def vertex_cover_tree(tree: Tree) -> int:
         tree.remove_from_vertex_cover(0)
         return 0
 
-    if tree.is_included() is not None:
-        return tree.get_count()
-
     vc_include_count = 1
     for child in tree.get_children():
-        vc_include_count += vertex_cover_tree(child)
+        if child.is_vertex_cover_evaluated():
+            vc_include_count += child.get_count()
+        else:
+            vc_include_count += vertex_cover_tree(child)
 
     vc_not_include_count = tree.get_num_children()
     for child in tree.get_children():
         for grandchild in child.get_children():
-            vc_not_include_count += vertex_cover_tree(grandchild)
+            if grandchild.is_vertex_cover_evaluated():
+                vc_not_include_count += grandchild.get_count()
+            else:
+                vc_not_include_count += vertex_cover_tree(grandchild)
 
     if vc_include_count <= vc_not_include_count:
         tree.add_to_vertex_cover(vc_include_count)
     else:
         tree.remove_from_vertex_cover(vc_not_include_count)
+        # if the current node is not included all the children have to be included
+        for child in tree.get_children():
+            # at this point is_include is certainly not None because the children are been
+            # previously evaluated
+            if not child.is_included():
+                child.add_to_vertex_cover(child.get_count()+1)
 
     return tree.get_count()
 

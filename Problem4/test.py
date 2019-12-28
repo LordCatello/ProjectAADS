@@ -43,8 +43,9 @@ def build_random_tree(number_nodes: int = 10, max_number_children: int = 5) -> T
 
 tree = build_random_tree(30, 5)
 tree.dump()
-vertex_cover_tree(tree)
+print(vertex_cover_tree(tree))
 tree.dump()
+
 
 # vertex_cover = {}
 # print(VertexCoverv2(tree, vertex_cover))

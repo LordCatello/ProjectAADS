@@ -63,6 +63,15 @@ class Tree:
         return self.__count
 
     """
+    It returns a boolean indicating if the vertex cover for this node has already been evaluated
+    
+    :return true if the vertex cover for this node has already been evaluated
+            false otherwise
+    """
+    def is_vertex_cover_evaluated(self) -> bool:
+        return self.is_included() is not None
+
+    """
      Dumps the tree
         
      dump() prints the tree in the standard output.
