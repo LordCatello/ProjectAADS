@@ -2,6 +2,7 @@
 
 from graph import Graph
 import random
+import time
 
 """
 This module contains functions used for testing the solution of the vertex cover function
@@ -54,3 +55,62 @@ def build_random_graph(number_vertices: int = 100, take_edge_prob: float = 0.5) 
                 graph.insert_edge(vertices[i], vertices[j])
 
     return graph
+
+
+"""
+It evaluates the performances of a list of vertex cover functions passed as parameter.
+
+The performance is evaluated os a set of randomly generated graphs with different probabilities.
+The set of graph is the same for every function.
+
+:param functions:   A list of functions on which it evaluates the performances
+
+:return             A list of tuples. Each tuple is related to a function.
+                    Each tuple consists of 3 elements.
+                    The first element is a boolean and it's True if the function evaluates a correct vertex_cover for all
+                    the graphs used as tests. It's false otherwise.
+                    The second element is a float and it's the average of the number of vertex included in the vertex cover.
+                    The second element is a float and it's the average time, in nanoseconds, needed to evaluate the results.
+"""
+def evaluate_performances(functions) -> [(bool, float, float)]:
+    performances = []
+    graphs = []
+
+    # build the graphs
+    for i in range(100):
+        graphs.append(build_random_graph(100, 0.5))
+
+    for function in functions:
+        # reset the counters
+        verified = True
+        sum_count = 0
+        sum_total_time = 0
+
+        for graph in graphs:
+            before_time_ns = time.time_ns()
+            count = function(graph)
+            after_time_ns = time.time_ns()
+
+            if not is_vertex_cover_correct(graph):
+                verified = False
+                break
+
+            total_time_ns = after_time_ns - before_time_ns
+
+            sum_count += count
+            sum_total_time += total_time_ns
+
+        average_count = sum_count / len(graphs)
+        average_time = sum_total_time / len(graphs)
+
+        performances.append((verified, average_count, average_time))
+
+        # I have reset all the graphs
+        for graph in graphs:
+            for vertex in graph.vertices():
+                vertex.set_element(None)
+
+            for edge in graph.edges():
+                edge.set_element(None)
+
+    return performances
