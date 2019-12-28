@@ -67,7 +67,7 @@ graph.graphic_dump()
 
 
 # test add_max_vertex_cover
-graph = build_random_graph(100, 0.5)
+graph = build_random_graph(100, 0.1)
 graph.dump()
 count = vertex_cover.add_max_vertex_cover(graph)
 graph.dump()
