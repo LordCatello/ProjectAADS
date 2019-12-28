@@ -54,9 +54,32 @@ graph = build_random_graph(100, 0.5)
 graph.dump()
 """
 
+"""
 # test approx_vertex_cover
 graph = build_random_graph(10, 0.5)
 count = vertex_cover.vertex_cover(graph)
 print(count)
 print(is_vertex_cover_correct(graph))
 graph.graphic_dump()
+"""
+
+"""
+# test add_max_vertex_cover
+graph = build_random_graph(100, 0.5)
+graph.dump()
+count = vertex_cover.add_max_vertex_cover(graph)
+graph.dump()
+print(count)
+print(is_vertex_cover_correct(graph))
+graph.graphic_dump()
+"""
+
+graph = build_random_graph(100, 0.1)
+count = vertex_cover.vertex_cover(graph)
+graph.dump()
+print(count)
+print(is_vertex_cover_correct(graph))
+graph.graphic_dump()
+
+
+
