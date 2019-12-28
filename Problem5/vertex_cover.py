@@ -41,6 +41,7 @@ def approx_vertex_cover(graph: Graph) -> int:
 
 """
 It evaluates a vertex cover for the graph using our algorithm.
+
 It starts from a random vertex, computes its degree = number of adjacent vertices not in the
 vertex cover, then for each adjacent vertex not already in the vertex cover compare the two
 degrees, the vertex with the greatest degree is added to the vertex cover
@@ -50,8 +51,7 @@ is updated. This is repeated on every vertex of the graph.
 
 :return         the number of vertex included in the vertex cover.
 """
-
-def vertex_cover(graph: Graph) -> int:
+def local_max_vertex_cover(graph: Graph) -> int:
     count = 0
     for v in graph.vertices():
         # if the vertex is already in the vertex cover then skip this iteration

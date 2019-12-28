@@ -63,22 +63,30 @@ It evaluates the performances of a list of vertex cover functions passed as para
 The performance is evaluated os a set of randomly generated graphs with different probabilities.
 The set of graph is the same for every function.
 
-:param functions:   A list of functions on which it evaluates the performances
+:param functions:       A list of functions on which it evaluates the performances
 
-:return             A list of tuples. Each tuple is related to a function.
-                    Each tuple consists of 3 elements.
-                    The first element is a boolean and it's True if the function evaluates a correct vertex_cover for all
-                    the graphs used as tests. It's false otherwise.
-                    The second element is a float and it's the average of the number of vertex included in the vertex cover.
-                    The second element is a float and it's the average time, in nanoseconds, needed to evaluate the results.
+:param take_edge_prob:  it is the probability of taking an edge between two vertices.
+                        It is used for building the graphs used during the test.
+                        If -1 is passed, a random probability is chosen for each graph
+
+:return                 A list of tuples. Each tuple is related to a function.
+                        Each tuple consists of 3 elements.
+                        The first element is a boolean and it's True if the function evaluates a correct vertex_cover for all
+                        the graphs used as tests. It's false otherwise.
+                        The second element is a float and it's the average of the number of vertex included in the vertex cover.
+                        The second element is a float and it's the average time, in nanoseconds, needed to evaluate the results.
 """
-def evaluate_performances(functions) -> [(bool, float, float)]:
+def evaluate_performances(functions, take_edge_prob: int = -1) -> [(bool, float, float)]:
     performances = []
     graphs = []
 
     # build the graphs
+    take_prob = take_edge_prob
     for i in range(100):
-        graphs.append(build_random_graph(100, 0.5))
+        if take_edge_prob == -1:
+            take_prob = random.random()
+
+        graphs.append(build_random_graph(100, take_prob))
 
     for function in functions:
         # reset the counters
