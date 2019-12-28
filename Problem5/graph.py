@@ -57,6 +57,9 @@ class Graph:
       """Return element associated with this edge."""
       return self._element
 
+    def set_element(self, element):
+      self._element = element
+
     def __hash__(self):         # will allow edge to be a map/set key
       return hash( (self._origin, self._destination) )
 

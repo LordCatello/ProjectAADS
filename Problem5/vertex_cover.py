@@ -6,7 +6,7 @@ from graph import Graph
 It evaluates a vertex cover for the graph using the approx_vertex_algorithm.
 
 The approx_vertex_algorithm is a simple 2-approximation algorithm.
-It is linear.
+It is linear in time.
 
 :param graph:   the graph on which the vertex cover is evaluated.
 
@@ -38,3 +38,58 @@ def approx_vertex_cover(graph: Graph) -> int:
 
     return count
 
+
+"""
+It evaluates a vertex cover for the graph using the remove_max_vertex_cover algorithm
+
+The remove_max_vertex_cover algorithm is a simple log(n)-approximation algorithm.
+It adds to the vertex cover always the vertex with the highest degree.
+The complexity is quadratic.
+
+:param graph:   the graph on which the vertex cover is evaluated.
+
+:return         the number of vertex included in the vertex cover.
+"""
+def add_max_vertex_cover(graph: Graph) -> int:
+    vertices = graph.vertices()
+    count = 0
+
+    for i in range(len(vertices)):
+        # take the vertex with the max degree
+        max_degree = -1
+        max_vertex = None
+        for vertex in vertices:
+            degree = compute_degree(graph, vertex)
+            if degree > max_degree:
+                max_degree = degree
+                max_vertex = vertex
+
+        # add this vertex to the vertex cover if his degree is greater than 0 (is connected to other vertices)
+        if max_degree > 0:
+            max_vertex.set_element(True)
+            count += 1
+
+        # set the label of all the incident edges as "removed"
+        for edge in graph.incident_edges(max_vertex):
+            edge.set_element("removed")
+
+    return count
+
+
+"""
+It computes the degree of a vertex
+
+It computes the degree considering only the edges that are labeled as not removed.
+
+:param graph:   the vertex of the graph
+:param vertex   the vertex on which compute the degree
+
+:return         the degree of the vertex
+"""
+def compute_degree(graph: Graph, vertex) -> int:
+    count = 0
+    for edge in graph.incident_edges(vertex):
+        if edge.element() != "removed":
+            count += 1
+
+    return count
