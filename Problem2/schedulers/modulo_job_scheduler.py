@@ -1,3 +1,5 @@
+from typing import Optional
+
 from .base_job_scheduler import BaseJobScheduler
 from ..dependencies.array_map import ArrayMap
 from ..dependencies.priority_queue.adaptable_heap_priority_queue import AdaptableHeapPriorityQueue
@@ -14,7 +16,7 @@ class ModuloJobScheduler(BaseJobScheduler):
     Therefore, a separate data structure based on arrival times is held to update priorities, and a heap-based
     adaptable priority queue is used for getting the highest priority job.
     """
-    __slots__ = '_current_time', '_priority_queue', '_aging_interval', '_jobs_by_modulo_aging_interval'
+    __slots__ = '_current_time', '_priority_queue', '_aging_interval', '_jobs_by_modulo_aging_interval', '_size'
 
     def __init__(self, aging_interval: int):
         """
@@ -27,6 +29,7 @@ class ModuloJobScheduler(BaseJobScheduler):
         self._current_time = 0
         self._priority_queue = AdaptableHeapPriorityQueue()
         self._aging_interval = aging_interval
+        self._size = 0
         # This maps the arrival time modulo aging_interval to all the Locator objects which are congruent to the
         # definition. The Locator object finds the element in the priority queue, in order to access the element in
         # O(1) when the priority will be updated.
@@ -65,18 +68,23 @@ class ModuloJobScheduler(BaseJobScheduler):
                 # updating the queue
                 self._priority_queue.update(job_locator, job.priority, job)
 
-    def add_job(self, priority: int, length: int):
-        job_to_add = self.Job(priority, length, self._current_time)
+    def add_job(self, name: str, priority: int, length: int):
+        job_to_add = self.Job(name, priority, length, self._current_time)
         job_locator = self._priority_queue.add(priority, job_to_add)
         self._jobs_by_modulo_aging_interval[self._current_time % self._aging_interval].append(job_locator)
+        self._size += 1
 
-    def get_max_priority_job(self) -> BaseJobScheduler.Job:
+    def get_max_priority_job(self) -> Optional[BaseJobScheduler.Job]:
         """
         Gives the highest priority job and removes it from the job queue.
         Warning: this method expects the jobs to be already updated, so it should be called after increment_time.
 
-        :return: the highest priority job.
+        :return: the highest priority job or None if no jobs are present in the queue.
         """
+
+        if self._size <= 0:
+            return None
+
         priority_job = self._priority_queue.remove_min()[1]
 
         # ----- find the job to remove in the helping data structure and delete it -----
@@ -95,4 +103,5 @@ class ModuloJobScheduler(BaseJobScheduler):
 
         job_locators_to_visit.pop(index_to_delete)
 
+        self._size -= 1
         return priority_job

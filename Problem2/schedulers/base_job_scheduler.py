@@ -12,15 +12,17 @@ class BaseJobScheduler:
         will need to complete it.
         Since the environment of the job supports aging, the arrival time of the job is kept track of.
         """
-        __slots__ = 'priority', 'length', 'arrival_time'
+        __slots__ = 'name', 'priority', 'length', 'arrival_time'
 
         MAX_PRIORITY = -20
         MIN_PRIORITY = 19
 
-        def __init__(self, priority: int, length: int, arrival_time: int):
+        def __init__(self, name: str, priority: int, length: int, arrival_time: int):
             """
             Creates a new job to be scheduled. This should not be constructed by the user.
 
+            :param name:
+                The name of the job.
             :param priority:
                 The priority of this job. It must be an integer in the range [-20, 19], inclusive, where the highest
                 priority is represented by the lowest number and vice versa.
@@ -32,7 +34,7 @@ class BaseJobScheduler:
             if not (BaseJobScheduler.Job.MAX_PRIORITY <= priority <= BaseJobScheduler.Job.MIN_PRIORITY):
                 raise ValueError("Priority must be between {} and {}.".format(BaseJobScheduler.Job.MAX_PRIORITY,
                                                                               BaseJobScheduler.Job.MIN_PRIORITY))
-
+            self.name = name
             self.priority = priority
             self.length = length
             self.arrival_time = arrival_time
@@ -42,7 +44,7 @@ class BaseJobScheduler:
         raise NotImplementedError("Must be implemented by subclasses.")
 
     @abstractmethod
-    def add_job(self, priority: int, length: int):
+    def add_job(self, name: str, priority: int, length: int):
         raise NotImplementedError("Must be implemented by subclasses.")
 
     @abstractmethod

@@ -34,7 +34,8 @@ class ArrayMap(MutableMapping):
             raise KeyError from index_error
 
     def __iter__(self):
-        return iter(self._array)
+        for index, _ in enumerate(self._array):
+            yield index
 
     def __len__(self) -> int:
         """Returns the length of the underlying static array, and not the actual amount of elements."""

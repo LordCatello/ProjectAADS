@@ -1,3 +1,5 @@
+from typing import Optional
+
 from .base_job_scheduler import BaseJobScheduler
 from ..dependencies.list.positional_list import PositionalList
 
@@ -8,7 +10,7 @@ class LazyJobScheduler(BaseJobScheduler):
     It handles everything only when a new job is requested, and not every time slice.
     """
 
-    __slots__ = '_priority_queue', '_current_time', '_aging_interval'
+    __slots__ = '_priority_queue', '_current_time', '_aging_interval', '_size'
 
     def __init__(self, aging_interval: int):
         """
@@ -21,6 +23,7 @@ class LazyJobScheduler(BaseJobScheduler):
         self._priority_queue = PositionalList()
         self._current_time = 0
         self._aging_interval = aging_interval
+        self._size = 0
 
     def increment_time(self):
         """Since a LazyJobScheduler only operates every once in a while, it needs to know when a time slice has
@@ -28,12 +31,13 @@ class LazyJobScheduler(BaseJobScheduler):
         Call this method when a time slice passes."""
         self._current_time += 1
 
-    def add_job(self, priority: int, length: int):
+    def add_job(self, name: str, priority: int, length: int):
         """Adds a new job to the queue with the specified priority and length."""
-        job_to_add = self.Job(priority, length, self._current_time)
+        job_to_add = self.Job(name, priority, length, self._current_time)
         self._priority_queue.add_last(job_to_add)
+        self._size += 1
 
-    def get_max_priority_job(self) -> BaseJobScheduler.Job:
+    def get_max_priority_job(self) -> Optional[BaseJobScheduler.Job]:
         """
         Gives the highest priority job to be scheduled.
         Moreover, it updates the queue, aging the jobs which waited too long, according to the aging_interval
@@ -44,7 +48,11 @@ class LazyJobScheduler(BaseJobScheduler):
 
 
         :return:
-            The job with the highest priority after the update."""
+            The job with the highest priority after the update or None if there no jobs in the queue."""
+
+        if self._size <= 0:
+            return None
+
         priority_job_position = self._priority_queue.first()
 
         # I can't iterate with __iter__ because PositionalList returns an iterator over elements, when I want to keep
@@ -63,6 +71,7 @@ class LazyJobScheduler(BaseJobScheduler):
             # updating next element to iterate over
             current_job_position = self._priority_queue.after(current_job_position)
 
+        self._size -= 1
         return self._priority_queue.delete(priority_job_position)
 
     def _age_job(self, job: BaseJobScheduler.Job):
