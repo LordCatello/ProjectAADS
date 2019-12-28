@@ -1,3 +1,5 @@
+# 28/12/2019
+
 class Graph:
   """Representation of a simple graph using an adjacency map."""
 
@@ -6,7 +8,7 @@ class Graph:
     """Lightweight vertex structure for a graph."""
     __slots__ = '_element'
 
-    def __init__(self, x=None):
+    def __init__(self, x):
       """Do not call constructor directly. Use Graph's insert_vertex(x)."""
       self._element = x
 

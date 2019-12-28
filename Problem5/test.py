@@ -1,6 +1,9 @@
+# 28/12/2019
+
 from graph import Graph
 from test_functions import is_vertex_cover_correct
 from test_functions import build_random_graph
+import vertex_cover
 
 
 """
@@ -40,10 +43,18 @@ def test_is_vertex_cover_correct() -> bool:
     else:
         return True
 
-
+"""
 # test is_vertex_cover_correct function
 print(test_is_vertex_cover_correct())
 
 # test build_random_graph function
-graph = build_random_graph(1000, 0.5)
+graph = build_random_graph(100, 0.5)
 graph.dump()
+"""
+
+# test approx_vertex_cover
+graph = build_random_graph(3, 1)
+graph.dump()
+vertex_cover.approx_vertex_cover(graph)
+graph.dump()
+print(is_vertex_cover_correct(graph))
