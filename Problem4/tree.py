@@ -1,36 +1,93 @@
+# 27/12/2019
 
-class Tree():
+from queue import Queue
 
-    __slots__ = '_vertex_cover_count', '_children','_label'
 
-    def __init__(self,element=None,label='out'):
-        self._children = []
-        self._vertex_cover_count=element
-        self._label=label
+class Tree:
+    __slots__ = '__children', '__included', '__count'
 
-    def element(self):
-        return self._vertex_cover_count
+    """
+    It builds a new instance of Tree
 
-    def num_children(self):
-        return len(self._children)
+    :param included:    It indicates if the node is included or not in the vertex cover.
+                        It can be:
+                        None: Vertex cover not evaluated yet for this node
+                        True: Included in the vertex cover
+                        False: Not included in the vertex cover
+                        
+    :param count:       It indicates the number of nodes of the tree included in the vertex cover.                                   
+    """
+    def __init__(self, included: bool = None, count: int = 0):
+        self.__children = []
+        self.__included = included
+        self.__count = count
 
-    def children(self):
-        if len(self._children)==0:
-            return None
-        for p in self._children:
-            yield p
+    def get_children(self) -> 'Tree':
+        for c in self.__children:
+            yield c
 
-    def change_label(self,new_label):
-        self._label=new_label
+    def get_num_children(self) -> int:
+        return len(self.__children)
 
-    def add_child(self,child):
-        self._children.append(child)
+    def add_child(self, child: 'Tree'):
+        self.__children.append(child)
 
-    def update_vertex_count(self,new_vertex_count):
-        self._vertex_cover_count=new_vertex_count
+    def is_included(self) -> bool:
+        return self.__included
 
-    def get_label(self):
-        return self._label
+    """
+    It adds the current node to the vertex cover
+    
+    It adds the current node to the vertex cover,
+    setting "included" to True and "count" to "count".
 
-    def get_vertex_count(self):
-        return self._vertex_cover_count
+    :param count: it is the number of nodes of this tree added to the vertex cover, including this node.                
+    """
+    def add_to_vertex_cover(self, count: int):
+        self.__included = True
+        self.__count = count
+
+    """
+    It removes the current node to the vertex cover
+
+    It removes the current node to the vertex cover,
+    setting "included" to False and "count" to "count".
+
+    :param count: it is the number of nodes of this tree added to the vertex cover, including this node.                
+    """
+    def remove_from_vertex_cover(self, count: int):
+        self.__included = False
+        self.__count = count
+
+    def get_count(self):
+        return self.__count
+
+    """
+     Dumps the tree
+        
+     dump() prints the tree in the standard output.
+     A new level is placed on a new line.
+     The collection of children of two different nodes in the same line are divided by more space
+     respects to the space used for the children of the same node.
+     For each node, the "included" value and the "count" are printed.
+    """
+    def dump(self):
+        queue = Queue()
+        queue.put(self)
+
+        while not queue.empty():
+            print()
+            count = queue.qsize()
+
+            for i in range(0, count):
+                element = queue.get()
+                if element == "tab":
+                    print(end="\t")
+                else:
+                    print(element.is_included(), " - ", element.get_count(), end="\t")
+
+                    for child in element.get_children():
+                        queue.put(child)
+                    queue.put("tab")
+
+
