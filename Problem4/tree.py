@@ -1,6 +1,5 @@
 # 27/12/2019
 
-from __future__ import annotations
 from queue import Queue
 
 
@@ -23,14 +22,14 @@ class Tree:
         self.__included = included
         self.__count = count
 
-    def get_children(self) -> Tree:
+    def get_children(self) -> 'Tree':
         for c in self.__children:
             yield c
 
     def get_num_children(self) -> int:
         return len(self.__children)
 
-    def add_child(self, child: Tree):
+    def add_child(self, child: 'Tree'):
         self.__children.append(child)
 
     def is_included(self) -> bool:
