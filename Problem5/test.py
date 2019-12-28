@@ -43,11 +43,13 @@ def test_is_vertex_cover_correct() -> bool:
     else:
         return True
 
+
 """
 # test is_vertex_cover_correct function
 print(test_is_vertex_cover_correct())
 
 # test build_random_graph function
+
 graph = build_random_graph(100, 0.5)
 graph.dump()
 """
