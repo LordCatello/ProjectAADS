@@ -10,7 +10,7 @@ class LazyJobScheduler(BaseJobScheduler):
 
     __slots__ = '_priority_queue', '_current_time', '_aging_interval'
 
-    def __init__(self, aging_interval):
+    def __init__(self, aging_interval: int):
         """
         Creates an empty LazyJobScheduler, ready to receive jobs.
 
@@ -77,5 +77,9 @@ class LazyJobScheduler(BaseJobScheduler):
 
         # if a job needs to age, I update its priority and its arrival time for future updates
         if age_increment > 0:
-            job.priority += age_increment
+            job.priority -= age_increment
+            # ensuring it doesn't get below the minimum
+            if job.priority < BaseJobScheduler.Job.MAX_PRIORITY:
+                job.priority = BaseJobScheduler.Job.MAX_PRIORITY
+
             job.arrival_time += self._aging_interval * age_increment

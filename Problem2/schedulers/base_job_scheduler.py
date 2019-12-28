@@ -1,5 +1,8 @@
+from abc import abstractmethod
+
+
 class BaseJobScheduler:
-    """An abstract class for job schedulers."""
+    """An abstract base class for job schedulers."""
 
     # -------------------------------- Nested Job class --------------------------------
 
@@ -10,6 +13,9 @@ class BaseJobScheduler:
         Since the environment of the job supports aging, the arrival time of the job is kept track of.
         """
         __slots__ = 'priority', 'length', 'arrival_time'
+
+        MAX_PRIORITY = -20
+        MIN_PRIORITY = 19
 
         def __init__(self, priority: int, length: int, arrival_time: int):
             """
@@ -23,19 +29,23 @@ class BaseJobScheduler:
             :param arrival_time:
                 The number of the time slice this job was created.
             """
-            if not (-20 <= priority <= 19):
-                raise ValueError("Priority must be between -20 and 19.")
+            if not (BaseJobScheduler.Job.MAX_PRIORITY <= priority <= BaseJobScheduler.Job.MIN_PRIORITY):
+                raise ValueError("Priority must be between {} and {}.".format(BaseJobScheduler.Job.MAX_PRIORITY,
+                                                                              BaseJobScheduler.Job.MIN_PRIORITY))
 
             self.priority = priority
             self.length = length
             self.arrival_time = arrival_time
 
+    @abstractmethod
     def get_max_priority_job(self) -> Job:
         raise NotImplementedError("Must be implemented by subclasses.")
 
+    @abstractmethod
     def add_job(self, priority: int, length: int):
         raise NotImplementedError("Must be implemented by subclasses.")
 
+    @abstractmethod
     def increment_time(self):
         """Call this method at every time slice."""
         raise NotImplementedError("Must be implemented by subclasses.")
