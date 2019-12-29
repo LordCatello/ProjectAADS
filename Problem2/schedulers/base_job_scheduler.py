@@ -17,6 +17,9 @@ class BaseJobScheduler:
         MAX_PRIORITY = -20
         MIN_PRIORITY = 19
 
+        MIN_LENGTH = 1
+        MAX_LENGTH = 100
+
         def __init__(self, name: str, priority: int, length: int, arrival_time: int):
             """
             Creates a new job to be scheduled. This should not be constructed by the user.
@@ -27,13 +30,17 @@ class BaseJobScheduler:
                 The priority of this job. It must be an integer in the range [-20, 19], inclusive, where the highest
                 priority is represented by the lowest number and vice versa.
             :param length:
-                The number of time slices this job will be executed for.
+                The number of time slices this job will be executed for. It must be an integer in the range [1, 100],
+                inclusive.
             :param arrival_time:
                 The number of the time slice this job was created.
             """
             if not (BaseJobScheduler.Job.MAX_PRIORITY <= priority <= BaseJobScheduler.Job.MIN_PRIORITY):
                 raise ValueError("Priority must be between {} and {}.".format(BaseJobScheduler.Job.MAX_PRIORITY,
                                                                               BaseJobScheduler.Job.MIN_PRIORITY))
+            if not (BaseJobScheduler.Job.MIN_LENGTH <= length <= BaseJobScheduler.Job.MAX_LENGTH):
+                raise ValueError("Length must be between {} and {}.".format(BaseJobScheduler.Job.MIN_LENGTH,
+                                                                            BaseJobScheduler.Job.MAX_LENGTH))
             self.name = name
             self.priority = priority
             self.length = length
