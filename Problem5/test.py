@@ -74,7 +74,7 @@ print(is_vertex_cover_correct(graph))
 graph.graphic_dump()
 """
 
-graph = build_random_graph(100, 0.1)
+graph = build_random_graph(6, 1)
 count = vertex_cover.vertex_cover(graph)
 graph.dump()
 print(count)
