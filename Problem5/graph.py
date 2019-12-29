@@ -149,7 +149,12 @@ class Graph:
       yield edge.element()
 
   def insert_vertex(self, x=None):
-    """Insert and return a new Vertex with element x."""
+    """
+    Insert and return a new Vertex with element x.
+
+    The default value of the vertex is None.
+    A different value must not be passed because the vertex_cover algorithm expects this value.
+    """
     v = self.Vertex(x)
     self._outgoing[v] = {}
     if self.is_directed():
@@ -157,7 +162,11 @@ class Graph:
     return v
 
   def insert_edge(self, u, v, x=1):
-    """Insert and return a new Edge from u to v with auxiliary element x.
+    """
+    Insert and return a new Edge from u to v with auxiliary element x.
+
+    The default value of the edge is 1.
+    A different value must not be passed because the vertex_cover algorithm expects this value.
 
     Raise a ValueError if u and v are not vertices of the graph.
     Raise a ValueError if u and v are already adjacent.
