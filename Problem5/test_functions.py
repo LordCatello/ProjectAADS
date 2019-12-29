@@ -60,7 +60,7 @@ def build_random_graph(number_vertices: int = 100, take_edge_prob: float = 0.5) 
     return graph
 
 
-def evaluate_performances(functions, take_edge_prob: int = -1) -> [(bool, float, float)]:
+def evaluate_performances(functions, number_graphs: int = 100, take_edge_prob: int = -1) -> [(bool, float, float)]:
     """
     It evaluates the performances of a list of vertex cover functions passed as parameter.
 
@@ -68,6 +68,8 @@ def evaluate_performances(functions, take_edge_prob: int = -1) -> [(bool, float,
     The set of graph is the same for every function.
 
     :param functions:       A list of functions on which it evaluates the performances
+
+    :param number_graphs:   The number of graphs used for testing the functions.
 
     :param take_edge_prob:  it is the probability of taking an edge between two vertices.
                             It is used for building the graphs used during the test.
@@ -86,7 +88,7 @@ def evaluate_performances(functions, take_edge_prob: int = -1) -> [(bool, float,
 
     # build the graphs
     take_prob = take_edge_prob
-    for i in range(100):
+    for i in range(number_graphs):
         if take_edge_prob == -1:
             take_prob = random.random()
 

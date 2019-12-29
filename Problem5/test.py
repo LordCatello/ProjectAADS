@@ -45,15 +45,18 @@ def test_is_vertex_cover_correct() -> bool:
     else:
         return True
 
-# evaluates the performances for all the algorithms
-functions_names = ["approx_vertex_cover", "add_max_vertex_cover", "local_max_vertex_cover"]
-functions = [vertex_cover.approx_vertex_cover, vertex_cover.add_max_vertex_cover, vertex_cover.local_max_vertex_cover]
 
-results = test_functions.evaluate_performances(functions)
+
+# evaluates the performances for all the algorithms
+functions_names = ["approx_vertex_cover", "add_max_vertex_cover", "local_max_vertex_cover", "random_vertex_cover", "weighted_random_vertex_cover", "improved_local_max_vertex_cover"]
+functions = [vertex_cover.approx_vertex_cover, vertex_cover.add_max_vertex_cover, vertex_cover.local_max_vertex_cover, vertex_cover.random_vertex_cover, vertex_cover.weighted_random_vertex_cover, vertex_cover.improved_local_max_vertex_cover]
+
+results = test_functions.evaluate_performances(functions, 5, 0.5)
 
 print("function name - correct - performance - time_ns - time_ms")
 for i in range(len(functions)):
     print(functions_names[i], " - ", results[i][0], " - ", results[i][1], " - ", results[i][2], " - ", results[i][2] / 1000000 )
+
 
 """
 # test is_vertex_cover_correct function
@@ -84,14 +87,15 @@ print(count)
 print(is_vertex_cover_correct(graph))
 graph.graphic_dump()
 """
+
 """
 graph = build_random_graph(6, 1)
 count = vertex_cover.vertex_cover(graph)
+"""
 
-graph = build_random_graph(100, 0.1)
+"""
+graph = build_random_graph(100, 0.5)
 count = vertex_cover.local_max_vertex_cover(graph)
-
-graph.dump()
 print(count)
 print(is_vertex_cover_correct(graph))
 graph.graphic_dump()
