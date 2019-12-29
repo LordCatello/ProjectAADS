@@ -1,7 +1,7 @@
 import sys
 from typing import Callable
 
-sys.path.append(".")
+sys.path.append("..")
 from Problem2 import *  # relative imports are contained in __init__.py
 
 PROMPT_SYMBOL = "> "
