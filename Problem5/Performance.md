@@ -21,4 +21,10 @@ local_max_vertex_cover  -  True  -  88.32  -  4158627.0  -  4.158627
 add_max is slightly better is a lot of cases, but it takes too much time. If we can optimize a lot this function we can use it, but probably we can't do it because the complexity is at least quadratic.
 Local max is linear.
 
+local_max_vertex_cover  -  True  -  92.64  -  4137359.0  -  4.137359
+boolean True instead of "removed" in the edge
 
+optimized_local_max_vertex_cover  -  True  -  92.36  -  3919518.0  -  3.919518
+optimized the compute_degree function, using sum built-in function
+edges are inizialized to 1
+when they are removed, they are set to 0
