@@ -7,20 +7,21 @@ from tree import Tree
 from vertex_cover_tree import vertex_cover_tree
 
 
-"""
-It builds a tree randomly
-    
-It builds a tree with as many nodes as specified in the parameters.
-The number of childs of a node is chosen randomly between 1 and max_number_children
-    
-:param  number_nodes:           The number of nodes that the tree must have.
-
-:param  max_number_children     The maximum number of children that a node can have
-
-:return                         A tree built in according to the parameters.
-
-"""
 def build_random_tree(number_nodes: int = 10, max_number_children: int = 5) -> Tree:
+    """
+    It builds a tree randomly
+
+    It builds a tree with as many nodes as specified in the parameters.
+    The number of childs of a node is chosen randomly between 1 and max_number_children
+
+    :param  number_nodes:           The number of nodes that the tree must have.
+
+    :param  max_number_children     The maximum number of children that a node can have
+
+    :return                         A tree built in according to the parameters.
+
+    """
+
     tree = Tree()
     queue = Queue()
 
