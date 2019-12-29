@@ -1,7 +1,7 @@
 from typing import Optional
 
 from .base_job_scheduler import BaseJobScheduler
-from ..dependencies.list.positional_list import PositionalList
+from ..dependencies.book_external.list.positional_list import PositionalList
 
 
 class LazyJobScheduler(BaseJobScheduler):

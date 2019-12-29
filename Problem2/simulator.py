@@ -1,7 +1,6 @@
 from typing import Callable
 
-import Problem2
-from Problem2.schedulers.base_job_scheduler import BaseJobScheduler
+from Problem2 import *  # relative imports are contained in __init__.py
 
 PROMPT_SYMBOL = "> "
 
@@ -13,9 +12,9 @@ def main():
     scheduler_choice = choose_scheduler()
 
     if scheduler_choice == 1:
-        scheduler = Problem2.LazyJobScheduler(aging_interval)
+        scheduler = LazyJobScheduler(aging_interval)
     elif scheduler_choice == 2:
-        scheduler = Problem2.ModuloJobScheduler(aging_interval)
+        scheduler = ModuloJobScheduler(aging_interval)
 
     job_in_execution = None
     while True:

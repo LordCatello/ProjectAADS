@@ -1,8 +1,8 @@
 from typing import Optional
 
 from .base_job_scheduler import BaseJobScheduler
-from ..dependencies.array_map import ArrayMap
-from ..dependencies.priority_queue.adaptable_heap_priority_queue import AdaptableHeapPriorityQueue
+from ..dependencies.book_external.priority_queue.adaptable_heap_priority_queue import AdaptableHeapPriorityQueue
+from ..dependencies.self_made.array_map import ArrayMap
 
 
 class ModuloJobScheduler(BaseJobScheduler):
