@@ -7,13 +7,14 @@ import test_functions
 import vertex_cover
 
 
-"""
-It tests if the function "is_vertex_cover_correct" is correct.
-
-:return True if the return value of the "is_vertex_cover_correct" is correct.
-        False otherwise.
-"""
 def test_is_vertex_cover_correct() -> bool:
+    """
+    It tests if the function "is_vertex_cover_correct" is correct.
+
+    :return True if the return value of the "is_vertex_cover_correct" is correct.
+            False otherwise.
+    """
+
     # I have to build a bunch of graphs for testing the function
     graph1 = Graph()
     output1 = True
@@ -83,10 +84,13 @@ print(count)
 print(is_vertex_cover_correct(graph))
 graph.graphic_dump()
 """
-
 """
+graph = build_random_graph(6, 1)
+count = vertex_cover.vertex_cover(graph)
+
 graph = build_random_graph(100, 0.1)
 count = vertex_cover.local_max_vertex_cover(graph)
+
 graph.dump()
 print(count)
 print(is_vertex_cover_correct(graph))
