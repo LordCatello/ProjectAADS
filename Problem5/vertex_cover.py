@@ -63,29 +63,77 @@ def local_max_vertex_cover(graph: Graph) -> int:
         if v.element():
             continue
 
-        current_degree = compute_degree(graph, v)
+        current_degree = optimized_compute_degree(graph, v)
 
         for edge in graph.incident_edges(v):
             u = edge.opposite(v)
             # if my neighbour is already in the vertex cover then skip this iteration
             if u.element():
                 continue
+
+            count += 1
             # if my neighbour has a degree bigger then mine put him in the solution
             # and "remove" all is incident edges.
-            if compute_degree(graph, u) > current_degree:
-                u.set_element(True)
-                count += 1
+            if optimized_compute_degree(graph, u) > current_degree:
                 current_degree -= 1
+                u.set_element(True)
                 for e in graph.incident_edges(u):
-                    e.set_element("removed")
+                    e.set_element(True)
 
             # if i have a degree bigger then my neighbour put me in the solution
             # and "remove" all my incident edges, then break so go to the next vertex
             else:
                 v.set_element(True)
-                count += 1
                 for e in graph.incident_edges(v):
-                    e.set_element("removed")
+                    e.set_element(True)
+                break
+    return count
+
+
+def optimized_local_max_vertex_cover(graph: Graph) -> int:
+    """
+    It evaluates a vertex cover for the graph using our algorithm.
+
+    It starts from a random vertex, computes its degree = number of adjacent vertices not in the
+    vertex cover, then for each adjacent vertex not already in the vertex cover compare the two
+    degrees, the vertex with the greatest degree is added to the vertex cover
+    all its edges are "removed" from the graph and the degree of the current vertex
+    is updated. This is repeated on every vertex of the graph.
+
+    :param graph:   the graph on which the vertex cover is evaluated.
+
+    :return         the number of vertex included in the vertex cover.
+    """
+
+    count = 0
+    for v in graph.vertices():
+        # if the vertex is already in the vertex cover then skip this iteration
+        if v.element():
+            continue
+
+        current_degree = optimized_compute_degree(graph, v)
+
+        for edge in graph.incident_edges(v):
+            u = edge.opposite(v)
+            # if my neighbour is already in the vertex cover then skip this iteration
+            if u.element():
+                continue
+
+            count += 1
+            # if my neighbour has a degree bigger then mine put him in the solution
+            # and "remove" all is incident edges.
+            if optimized_compute_degree(graph, u) > current_degree:
+                current_degree -= 1
+                u.set_element(True)
+                for e in graph.incident_edges(u):
+                    e.set_element(True)
+
+            # if i have a degree bigger then my neighbour put me in the solution
+            # and "remove" all my incident edges, then break so go to the next vertex
+            else:
+                v.set_element(True)
+                for e in graph.incident_edges(v):
+                    e.set_element(True)
                 break
     return count
 
@@ -124,7 +172,7 @@ def add_max_vertex_cover(graph: Graph) -> int:
 
         # set the label of all the incident edges as "removed"
         for edge in graph.incident_edges(max_vertex):
-            edge.set_element("removed")
+            edge.set_element(True)
 
     return count
 
@@ -205,12 +253,12 @@ def weighted_random_vertex_cover(graph: Graph) -> int:
                 count += 1
                 current_degree -= 1
                 for e in graph.incident_edges(u):
-                    e.set_element("removed")
+                    e.set_element(True)
             else:
                 v.set_element(True)
                 count += 1
                 for e in graph.incident_edges(v):
-                    e.set_element("removed")
+                    e.set_element(True)
                 break
     return count
 
@@ -254,7 +302,7 @@ def improved_local_max_vertex_cover(graph: Graph) -> int:
 
                 # Remove all the incident edges
                 for e in graph.incident_edges(max_element[0]):
-                    e.set_element("removed")
+                    e.set_element(True)
 
                 # update the counter
                 count += 1
@@ -272,8 +320,27 @@ def improved_local_max_vertex_cover(graph: Graph) -> int:
 
             # Remove all the incident edges of v
             for e in graph.incident_edges(v):
-                e.set_element("removed")
+                e.set_element(True)
 
+    return count
+
+
+def optimized_compute_degree(graph: Graph, vertex) -> int:
+    """
+    It computes the degree of a vertex
+
+    It computes the degree considering only the edges that are labeled as not removed.
+
+    :param graph:   the vertex of the graph
+    :param vertex   the vertex on which compute the degree
+
+    :return         the degree of the vertex
+    """
+
+    count = 0
+    for edge in graph.incident_edges(vertex):
+        if not edge.element():
+            count += 1
 
     return count
 

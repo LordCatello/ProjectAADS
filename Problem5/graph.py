@@ -20,7 +20,7 @@ class Graph:
       return self._element
 
     def set_element(self, element: bool):
-        self._element = element
+      self._element = element
 
     def __hash__(self):         # will allow vertex to be a map/set key
       return hash(id(self))
