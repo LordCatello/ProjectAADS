@@ -2,17 +2,19 @@
 
 from graph import Graph
 
-"""
-It evaluates a vertex cover for the graph using the approx_vertex_algorithm.
 
-The approx_vertex_algorithm is a simple 2-approximation algorithm.
-It is linear in time.
-
-:param graph:   the graph on which the vertex cover is evaluated.
-
-:return         the number of vertex included in the vertex cover.
-"""
 def approx_vertex_cover(graph: Graph) -> int:
+    """
+    It evaluates a vertex cover for the graph using the approx_vertex_algorithm.
+
+    The approx_vertex_algorithm is a simple 2-approximation algorithm.
+    It is linear in time.
+
+    :param graph:   the graph on which the vertex cover is evaluated.
+
+    :return         the number of vertex included in the vertex cover.
+    """
+
     edges = graph.edges()
     count = 0
 
@@ -39,19 +41,20 @@ def approx_vertex_cover(graph: Graph) -> int:
     return count
 
 
-"""
-It evaluates a vertex cover for the graph using our algorithm.
-
-It starts from a random vertex, computes its degree = number of adjacent vertices not in the
-vertex cover, then for each adjacent vertex not already in the vertex cover compare the two
-degrees, the vertex with the greatest degree is added to the vertex cover
-all its edges are "removed" from the graph and the degree of the current vertex
-is updated. This is repeated on every vertex of the graph.
-:param graph:   the graph on which the vertex cover is evaluated.
-
-:return         the number of vertex included in the vertex cover.
-"""
 def local_max_vertex_cover(graph: Graph) -> int:
+    """
+    It evaluates a vertex cover for the graph using our algorithm.
+
+    It starts from a random vertex, computes its degree = number of adjacent vertices not in the
+    vertex cover, then for each adjacent vertex not already in the vertex cover compare the two
+    degrees, the vertex with the greatest degree is added to the vertex cover
+    all its edges are "removed" from the graph and the degree of the current vertex
+    is updated. This is repeated on every vertex of the graph.
+    :param graph:   the graph on which the vertex cover is evaluated.
+
+    :return         the number of vertex included in the vertex cover.
+    """
+
     count = 0
     for v in graph.vertices():
         # if the vertex is already in the vertex cover then skip this iteration
@@ -84,21 +87,20 @@ def local_max_vertex_cover(graph: Graph) -> int:
     return count
 
 
-"""
-
-It evaluates a vertex cover for the graph using the remove_max_vertex_cover algorithm
-
-The remove_max_vertex_cover algorithm is a simple log(n)-approximation algorithm.
-It adds to the vertex cover always the vertex with the highest degree.
-The complexity is quadratic.
-
-
-:param graph:   the graph on which the vertex cover is evaluated.
-
-:return         the number of vertex included in the vertex cover.
-
-"""
 def add_max_vertex_cover(graph: Graph) -> int:
+    """
+    It evaluates a vertex cover for the graph using the remove_max_vertex_cover algorithm
+
+    The remove_max_vertex_cover algorithm is a simple log(n)-approximation algorithm.
+    It adds to the vertex cover always the vertex with the highest degree.
+    The complexity is quadratic.
+
+
+    :param graph:   the graph on which the vertex cover is evaluated.
+
+    :return         the number of vertex included in the vertex cover.
+    """
+
     vertices = graph.vertices()
     count = 0
 
@@ -124,17 +126,18 @@ def add_max_vertex_cover(graph: Graph) -> int:
     return count
 
 
-"""
-It computes the degree of a vertex
-
-It computes the degree considering only the edges that are labeled as not removed.
-
-:param graph:   the vertex of the graph
-:param vertex   the vertex on which compute the degree
-
-:return         the degree of the vertex
-"""
 def compute_degree(graph: Graph, vertex) -> int:
+    """
+    It computes the degree of a vertex
+
+    It computes the degree considering only the edges that are labeled as not removed.
+
+    :param graph:   the vertex of the graph
+    :param vertex   the vertex on which compute the degree
+
+    :return         the degree of the vertex
+    """
+
     count = 0
     for edge in graph.incident_edges(vertex):
         if edge.element() != "removed":

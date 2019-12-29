@@ -4,21 +4,23 @@ from graph import Graph
 import random
 import time
 
-"""
-This module contains functions used for testing the solution of the vertex cover function
-"""
 
-"""
-It returns True if the vertex cover is evaluated correctly on the graph passed as parameter.
-
-It returns True if, for every pair of vertices connected by an edge, at least one of them is in the vertex cover.
-
-:param graph:   the graph on which the function evaluates if the vertex cover is evaluated correctly or not.
-
-:return         True if the vertex cover is evaluated correctly.
-                False otherwise.
-"""
 def is_vertex_cover_correct(graph: Graph) -> bool:
+    """
+    This module contains functions used for testing the solution of the vertex cover function
+    """
+
+    """
+    It returns True if the vertex cover is evaluated correctly on the graph passed as parameter.
+
+    It returns True if, for every pair of vertices connected by an edge, at least one of them is in the vertex cover.
+
+    :param graph:   the graph on which the function evaluates if the vertex cover is evaluated correctly or not.
+
+    :return         True if the vertex cover is evaluated correctly.
+                    False otherwise.
+    """
+
     for edge in graph.edges():
         (u, v) = edge.endpoints()
         # if none of the two vertices is in the vertex cover, then the vertex cover is not evaluated correctly
@@ -28,19 +30,20 @@ def is_vertex_cover_correct(graph: Graph) -> bool:
     return True
 
 
-"""
-It builds a graph in a random way
-
-It builds a graph with the number of vertices passed as parameter.
-The edges are chosen randomly using the probability passed as parameter.
-The graph returned is not necessarily connected.
-
-:param number_vertices:     it is the number of vertices to add to the graph
-:param take_edge_prob:      it is the probability of taking an edge between two vertices
-
-:return                     A graph
-"""
 def build_random_graph(number_vertices: int = 100, take_edge_prob: float = 0.5) -> Graph:
+    """
+    It builds a graph in a random way
+
+    It builds a graph with the number of vertices passed as parameter.
+    The edges are chosen randomly using the probability passed as parameter.
+    The graph returned is not necessarily connected.
+
+    :param number_vertices:     it is the number of vertices to add to the graph
+    :param take_edge_prob:      it is the probability of taking an edge between two vertices
+
+    :return                     A graph
+    """
+
     graph = Graph()
     vertices = []
     # I add number_vertices vertices to the graph
@@ -57,26 +60,27 @@ def build_random_graph(number_vertices: int = 100, take_edge_prob: float = 0.5) 
     return graph
 
 
-"""
-It evaluates the performances of a list of vertex cover functions passed as parameter.
-
-The performance is evaluated os a set of randomly generated graphs with different probabilities.
-The set of graph is the same for every function.
-
-:param functions:       A list of functions on which it evaluates the performances
-
-:param take_edge_prob:  it is the probability of taking an edge between two vertices.
-                        It is used for building the graphs used during the test.
-                        If -1 is passed, a random probability is chosen for each graph
-
-:return                 A list of tuples. Each tuple is related to a function.
-                        Each tuple consists of 3 elements.
-                        The first element is a boolean and it's True if the function evaluates a correct vertex_cover for all
-                        the graphs used as tests. It's false otherwise.
-                        The second element is a float and it's the average of the number of vertex included in the vertex cover.
-                        The second element is a float and it's the average time, in nanoseconds, needed to evaluate the results.
-"""
 def evaluate_performances(functions, take_edge_prob: int = -1) -> [(bool, float, float)]:
+    """
+    It evaluates the performances of a list of vertex cover functions passed as parameter.
+
+    The performance is evaluated os a set of randomly generated graphs with different probabilities.
+    The set of graph is the same for every function.
+
+    :param functions:       A list of functions on which it evaluates the performances
+
+    :param take_edge_prob:  it is the probability of taking an edge between two vertices.
+                            It is used for building the graphs used during the test.
+                            If -1 is passed, a random probability is chosen for each graph
+
+    :return                 A list of tuples. Each tuple is related to a function.
+                            Each tuple consists of 3 elements.
+                            The first element is a boolean and it's True if the function evaluates a correct vertex_cover for all
+                            the graphs used as tests. It's false otherwise.
+                            The second element is a float and it's the average of the number of vertex included in the vertex cover.
+                            The second element is a float and it's the average time, in nanoseconds, needed to evaluate the results.
+    """
+
     performances = []
     graphs = []
 

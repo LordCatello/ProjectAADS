@@ -2,16 +2,18 @@
 
 from tree import Tree
 
-"""
-It evaluates the minimum vertex cover of a tree.
 
-It evaluates the minimum vertex cover of the tree passed as parameter
-
-:param tree: the tree on wich the vertex cover is performed.
-
-:return      the number of nodes added to the vertex cover.
-"""
 def vertex_cover_tree(tree: Tree) -> int:
+    """
+    It evaluates the minimum vertex cover of a tree.
+
+    It evaluates the minimum vertex cover of the tree passed as parameter
+
+    :param tree: the tree on wich the vertex cover is performed.
+
+    :return      the number of nodes added to the vertex cover.
+    """
+
     if tree is None:
         return 0
 
