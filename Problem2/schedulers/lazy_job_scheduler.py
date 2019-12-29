@@ -48,7 +48,7 @@ class LazyJobScheduler(BaseJobScheduler):
 
 
         :return:
-            The job with the highest priority after the update or None if there no jobs in the queue."""
+            The job with the highest priority after the update or None if there are no jobs in the queue."""
 
         if self._size <= 0:
             return None
