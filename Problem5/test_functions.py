@@ -125,6 +125,6 @@ def evaluate_performances(functions, number_graphs: int = 100, take_edge_prob: i
                 vertex.set_element(None)
 
             for edge in graph.edges():
-                edge.set_element(None)
+                edge.set_element(1)
 
     return performances

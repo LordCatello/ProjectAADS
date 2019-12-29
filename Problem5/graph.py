@@ -136,6 +136,18 @@ class Graph:
     for edge in adj[v].values():
       yield edge
 
+  def neighbour_vertices(self, v, outgoing=True):
+    self._validate_vertex(v)
+    adj = self._outgoing if outgoing else self._incoming
+    for edge in adj[v].values():
+      yield edge.opposite(v)
+
+  def incident_edges_element(self, v, outgoing = True):
+    self._validate_vertex(v)
+    adj = self._outgoing if outgoing else self._incoming
+    for edge in adj[v].values():
+      yield edge.element()
+
   def insert_vertex(self, x=None):
     """Insert and return a new Vertex with element x."""
     v = self.Vertex(x)
@@ -144,7 +156,7 @@ class Graph:
       self._incoming[v] = {}        # need distinct map for incoming edges
     return v
 
-  def insert_edge(self, u, v, x=None):
+  def insert_edge(self, u, v, x=1):
     """Insert and return a new Edge from u to v with auxiliary element x.
 
     Raise a ValueError if u and v are not vertices of the graph.

@@ -78,14 +78,14 @@ def local_max_vertex_cover(graph: Graph) -> int:
                 current_degree -= 1
                 u.set_element(True)
                 for e in graph.incident_edges(u):
-                    e.set_element(True)
+                    e.set_element(0)
 
             # if i have a degree bigger then my neighbour put me in the solution
             # and "remove" all my incident edges, then break so go to the next vertex
             else:
                 v.set_element(True)
                 for e in graph.incident_edges(v):
-                    e.set_element(True)
+                    e.set_element(0)
                 break
     return count
 
@@ -111,10 +111,9 @@ def optimized_local_max_vertex_cover(graph: Graph) -> int:
         if v.element():
             continue
 
-        current_degree = optimized_compute_degree(graph, v)
+        current_degree = sum(graph.incident_edges_element(v))
 
-        for edge in graph.incident_edges(v):
-            u = edge.opposite(v)
+        for u in graph.neighbour_vertices(v):
             # if my neighbour is already in the vertex cover then skip this iteration
             if u.element():
                 continue
@@ -122,18 +121,18 @@ def optimized_local_max_vertex_cover(graph: Graph) -> int:
             count += 1
             # if my neighbour has a degree bigger then mine put him in the solution
             # and "remove" all is incident edges.
-            if optimized_compute_degree(graph, u) > current_degree:
+            if sum(graph.incident_edges_element(u)) > current_degree:
                 current_degree -= 1
                 u.set_element(True)
                 for e in graph.incident_edges(u):
-                    e.set_element(True)
+                    e.set_element(0)
 
             # if i have a degree bigger then my neighbour put me in the solution
             # and "remove" all my incident edges, then break so go to the next vertex
             else:
                 v.set_element(True)
                 for e in graph.incident_edges(v):
-                    e.set_element(True)
+                    e.set_element(0)
                 break
     return count
 
@@ -337,12 +336,7 @@ def optimized_compute_degree(graph: Graph, vertex) -> int:
     :return         the degree of the vertex
     """
 
-    count = 0
-    for edge in graph.incident_edges(vertex):
-        if not edge.element():
-            count += 1
-
-    return count
+    return sum(graph.incident_edges_element(vertex))
 
 
 def compute_degree(graph: Graph, vertex) -> int:
@@ -359,7 +353,7 @@ def compute_degree(graph: Graph, vertex) -> int:
 
     count = 0
     for edge in graph.incident_edges(vertex):
-        if edge.element() != "removed":
+        if not edge.element():
             count += 1
 
     return count
