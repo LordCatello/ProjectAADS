@@ -1,6 +1,6 @@
 from typing import Callable
 
-from Problem2 import *  # relative imports are contained in __init__.py
+from . import *  # relative imports are contained in __init__.py
 
 PROMPT_SYMBOL = "> "
 
