@@ -13,6 +13,10 @@ def vertex_cover(graph: Graph) -> int:
     all its edges are set as "removed" from the graph.
     This is repeated on every vertex of the graph.
 
+    This function assumes that all the vertices are initialized with "None"
+    and all the edges are initialized with 1.
+    If this is not True the algorithm could not work.
+
     The complexity of this algorithm is linear.
 
     :param graph:   the graph on which the vertex cover is evaluated.

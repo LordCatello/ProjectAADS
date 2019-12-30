@@ -152,8 +152,7 @@ class Graph:
     """
     Insert and return a new Vertex with element x.
 
-    The default value of the vertex is None.
-    A different value must not be passed because the vertex_cover algorithm expects this value.
+    A different value for the x parameter must not be passed because the vertex_cover algorithm expects to receive the default value.
     """
     v = self.Vertex(x)
     self._outgoing[v] = {}
@@ -165,8 +164,7 @@ class Graph:
     """
     Insert and return a new Edge from u to v with auxiliary element x.
 
-    The default value of the edge is 1.
-    A different value must not be passed because the vertex_cover algorithm expects this value.
+    A different value for the x parameter must not be passed because the vertex_cover algorithm expects to receive the default value.
 
     Raise a ValueError if u and v are not vertices of the graph.
     Raise a ValueError if u and v are already adjacent.
