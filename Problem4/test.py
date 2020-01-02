@@ -42,12 +42,16 @@ def build_random_tree(number_nodes: int = 10, max_number_children: int = 5) -> T
     return tree
 
 
+
 tree = build_random_tree(30, 5)
+print("This is the tree, between siblings there is a single tab, between children of different parents there are 2 tabs, and when a level is finished there is a backline")
 tree.dump()
-print(vertex_cover_tree(tree))
+print("")
+
+vertex_cover=vertex_cover_tree(tree)
+
+print("The minimum vertex cover for the tree is: ", vertex_cover)
+print("This is the tree with vertices labeled as True ora False, if True they are in the vertex cover if False no, there is also the minimum vertex cover for each subtree rooted in each vertex")
 tree.dump()
 
 
-# vertex_cover = {}
-# print(VertexCoverv2(tree, vertex_cover))
-# print(vertex_cover)
