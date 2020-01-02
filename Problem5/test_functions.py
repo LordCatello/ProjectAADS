@@ -4,12 +4,12 @@ from graph import Graph
 import random
 import time
 
+"""
+This module contains functions used for testing the solution of the vertex cover function
+"""
+
 
 def is_vertex_cover_correct(graph: Graph) -> bool:
-    """
-    This module contains functions used for testing the solution of the vertex cover function
-    """
-
     """
     It returns True if the vertex cover is evaluated correctly on the graph passed as parameter.
 
@@ -17,7 +17,7 @@ def is_vertex_cover_correct(graph: Graph) -> bool:
 
     :param graph:   the graph on which the function evaluates if the vertex cover is evaluated correctly or not.
 
-    :return         True if the vertex cover is evaluated correctly.
+    :return:        True if the vertex cover is evaluated correctly.
                     False otherwise.
     """
 
@@ -41,7 +41,7 @@ def build_random_graph(number_vertices: int = 100, take_edge_prob: float = 0.5) 
     :param number_vertices:     it is the number of vertices to add to the graph
     :param take_edge_prob:      it is the probability of taking an edge between two vertices
 
-    :return                     A graph
+    :return:                    A graph
     """
 
     graph = Graph()
@@ -75,7 +75,7 @@ def evaluate_performances(functions, number_graphs: int = 100, take_edge_prob: i
                             It is used for building the graphs used during the test.
                             If -1 is passed, a random probability is chosen for each graph
 
-    :return                 A list of tuples. Each tuple is related to a function.
+    :return:                A list of tuples. Each tuple is related to a function.
                             Each tuple consists of 3 elements.
                             The first element is a boolean and it's True if the function evaluates a correct vertex_cover for all
                             the graphs used as tests. It's false otherwise.

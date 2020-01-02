@@ -21,7 +21,7 @@ def vertex_cover(graph: Graph) -> int:
 
     :param graph:   the graph on which the vertex cover is evaluated.
 
-    :return         the number of vertex included in the vertex cover.
+    :return:        the number of vertex included in the vertex cover.
     """
 
     count = 0
