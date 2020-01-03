@@ -1,9 +1,5 @@
 README
 
-README
-
-README
-
 # Problem 5
 
 ## Introduction
@@ -24,11 +20,16 @@ The algorithm does not return always an optimal solution.
 For example the optimal solution for this graph is the one in the first image.
 Our algorithm could provide the solution of the second image, that is not optimal.
 
-![optimal_solution.png](../../_resources/c8e8c2474bbe4fdba546a0ebc4148d94.png)   ![our_solution.png](../../_resources/e1bd753a8a3d4925ac9662c475593170.png)
+
+
+![8a5b152e0127484fa52204b42cbe5c5f.png](../_resources/19c0f8b6de6a4d3c986956e548279d61.png)
+
+
+![e1bd753a8a3d4925ac9662c475593170.png](../_resources/aeaefd0ea4c043fbac4ca435b46bd871.png)
 
 
 ## Approximation ratio
-We are not able to find a precise approximation ratio for our algorithm. We notice that it's similar to an another algorithm, that we implemented and tested too. This algorithm, at each iteration, insert in the vertex cover the vertex with the higest degree (number of adjacent vertices not in the vertex cover). If a vertex has degree zero (is isolated), don't insert it. It is demonstrated that this algorithm, in the worst case, is log(n) worse respects the optimal one. So our algorithm is probably log(n) approximatde.
+We are not able to find a precise approximation ratio for our algorithm. We notice that it's similar to an another algorithm, that we implemented and tested too. This algorithm, at each iteration, insert in the vertex cover the vertex with the higest degree (number of adjacent vertices not in the vertex cover). If a vertex has degree zero (is isolated), don't insert it. It is demonstrated that this algorithm, in the worst case, is log(n) worse respects the optimal one. So our algorithm is probably log(n) approximate.
 We don't use this algorithm because is very slow compared to our algorithm (that is linear) and the performance is more or less the same.
 
 This is not the algorithm with the best approximation ratio.
