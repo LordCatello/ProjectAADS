@@ -13,7 +13,6 @@ class Node:
         for example you can specify np.dtype('U16') for a 16 char string.
         In general, If you want to use an object, you have to define a dtype object, for the same reason of the str
         (Node need to know the dimension of the memory to allocate).
-
         """
 
         # defines the "node" type
@@ -44,6 +43,10 @@ class Node:
     @parent.setter
     def parent(self, value: "Node"):
         self._struct[0]["parent"] = value
+
+    @property
+    def children(self):
+        return self._struct[0]["children"]
 
     def is_full(self) -> bool:
         return self.size == len(self._struct[0]["elements"])
@@ -98,8 +101,17 @@ class Node:
 
         return index
 
-    def get_element(self):
-        pass
+    def get_element_by_index(self, index):
+        if index >= self.size or index < 0:
+            raise IndexError
+
+        return self._struct[0]["elements"][index]
+
+    def get_child_by_index(self, index):
+        if index >= self.size + 1 or index < 0:
+            raise IndexError
+
+        return self._struct[0]["children"][index]
 
 
 

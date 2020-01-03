@@ -29,16 +29,35 @@ class BTree(MutableMapping):
         pass
 
     def __getitem__(self, key):
-        pass
+        current_node = self._root
+
+        while current_node is not None:
+            index = current_node.find_element_index(key)
+            # if index >= current_node.size the key is surely not in the current node (maybe is in the rightmost child)
+            if index < current_node.size:
+                element = current_node.get_element_by_index(index)
+                if element["key"] == key:
+                    return element["value"]
+
+            try:
+                current_node = current_node.get_child_by_index(index)
+            except IndexError:
+                break
+
+        return None
 
     def __len__(self) -> int:
         return self._size
 
+    # what type of visit I have to perform? Inorder?
     def __iter__(self):
         pass
 
     def __setitem__(self, k, v) -> None:
         pass
+
+    def is_empty(self) -> bool:
+        return self._size == 0
 
     def _compute_order(self) -> int:
         """
@@ -71,5 +90,12 @@ tree = BTree(np.dtype('U16'), int)
 pair_type = np.dtype([("key", tree._key_type), ("value", tree._value_type)])
 
 element1 = Node(pair_type, tree._order)
+element1.add_element("carmine", 3)
+element1.add_element("pippo", 58)
+element1.add_element("zelda", 3)
+
+tree._root = element1
+tree._size += 3
 
 print(element1._struct.itemsize)
+print(tree.__getitem__("pippo"))
