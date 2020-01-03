@@ -13,6 +13,7 @@ v7 = g.insert_vertex(x=7)
 v8 = g.insert_vertex(x=8)
 v9 = g.insert_vertex(x=9)
 v10 = g.insert_vertex(x=10)
+v11 = g.insert_vertex(x=11)
 # insert edges
 e1_10 = g.insert_edge(v1, v10, None)
 e1_2 = g.insert_edge(v1, v2, None)
@@ -27,4 +28,4 @@ e4_6 = g.insert_edge(v4, v6, None)
 e6_7 = g.insert_edge(v6, v7, None)
 
 # write code to call dfs method
-iterative_dfs.dfs(g, v1)
+iterative_dfs.dfs_complete(g)
