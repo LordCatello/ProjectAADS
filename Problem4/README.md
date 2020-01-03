@@ -1,8 +1,4 @@
-README
-
-README
-
-# Problem 4
+Problem 4
 
 ## Introduction
 The problem is an example of a vertex cover problem on a tree. So ,for simplicity, in this and in all the documents and files related to the problem number 4, we will refer to the vertex cover on a tree problem and not to the bacefook problem. 
@@ -23,6 +19,7 @@ For each node i of the tree we consider two cases:
    
 2. The node i is not inserted in the vertex cover.
    In this case, all the children of i have to be inserted in the vertex cover, and the optimal solutions of his grandchildren must considered.
+   
    $VCout(i) = children(i) + \sum_{k=1}^{grandchildren(i)} VC(k)$
 
 At the end the minimum of this two quantites is considered:

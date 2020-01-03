@@ -1,6 +1,4 @@
-README
-
-# Problem 5
+Problem 5
 
 ## Introduction
 The problem is an example of the **vertex cover problem** on a graph. So ,for simplicity, in this and in all the documents and files related to the problem number 5, we will refer to the vertex cover problem and not to the bacefook problem.
@@ -22,10 +20,13 @@ Our algorithm could provide the solution of the second image, that is not optima
 
 
 
-![8a5b152e0127484fa52204b42cbe5c5f.png](../_resources/19c0f8b6de6a4d3c986956e548279d61.png)
+![e1bd753a8a3d4925ac9662c475593170.png](../_resources/53068a5daac94045ae890388239f0ce3.png)
 
 
-![e1bd753a8a3d4925ac9662c475593170.png](../_resources/aeaefd0ea4c043fbac4ca435b46bd871.png)
+
+![19c0f8b6de6a4d3c986956e548279d61.png](../_resources/1b9aada17fa1409c8741a77da102a5a5.png)
+
+
 
 
 ## Approximation ratio
