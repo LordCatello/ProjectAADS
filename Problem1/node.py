@@ -68,6 +68,7 @@ class Node:
                 removed = self.elements[index]
                 for i in range(index, self.size):
                     self.elements[index] = self.elements[index+1]
+                self.size = self.size - 1
                 return removed
 
 

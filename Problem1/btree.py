@@ -29,7 +29,12 @@ class BTree(MutableMapping):
         self._min_internal_num_children = self._order // 2
 
     def __delitem__(self, key):
-        pass
+        if self.is_empty():
+            return None
+        else:
+            current_node, index = self._get_node_and_index(key)
+            
+
 
     def __getitem__(self, key):
         """
@@ -44,7 +49,23 @@ class BTree(MutableMapping):
         :return:        The value corresponding to the key, if the key is found,
                         None otherwise.
         """
+        node, index = self._get_node_and_index(key)
+        return node.elements[index]['value']
 
+
+    def __len__(self) -> int:
+        return self._size
+
+    def is_root(self, node):
+        return node == self._root
+
+    def _get_node_and_index(self, key):
+        '''
+
+        :param key: The key of the element.
+        :return: The node and the index of the array corresponding to the key, if the key is found,
+                 None otherwise.
+        '''
         current_node = self._root
 
         while current_node is not None:
@@ -53,7 +74,7 @@ class BTree(MutableMapping):
             if index < current_node.size:
                 element = current_node.get_element_by_index(index)
                 if element["key"] == key:
-                    return element["value"]
+                    return current_node, index
 
             try:
                 current_node = current_node.get_child_by_index(index)
@@ -62,8 +83,6 @@ class BTree(MutableMapping):
 
         return None
 
-    def __len__(self) -> int:
-        return self._size
 
     def inorder_vist(self):
         """
