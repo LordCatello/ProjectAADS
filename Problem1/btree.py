@@ -28,7 +28,7 @@ class BTree(MutableMapping):
         self._key_type = key_type
         self._value_type = value_type
         self._order = self._compute_order()
-        self._min_internal_num_children = ceil((self._order - 1) // 2)
+        self._min_internal_num_children = int(ceil((self._order - 1) / 2))
 
     @property
     def order(self) -> int:
