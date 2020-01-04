@@ -78,6 +78,67 @@ class BTree(MutableMapping):
         order = (remaining_dim + pair_dim) // (pair_dim + node_dim)
         return order
 
+    def insert_item(self, key, value):
+        if self.is_empty():
+            # create new node
+            self._insert_new(key, value)
+        else:
+            # have to insert in proper position
+            self._insert_existing(key, value)
+
+    def _insert_new(self, key, value):
+        # create new node
+        pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
+        new_node = Node(pair_type, self._order)
+        # add element to new node
+        new_node.add_element(key, value)
+        # set new node as root
+        self._root = new_node
+        # increase size
+        self._size += 1
+
+    def _insert_existing(self, key, value):
+        inserted = False
+        while True:
+            start = self._root
+            i = self._ceil_in_node(key, start)
+            elements = start.elements
+            children = start.children
+            if i == 0 or elements[i - 1] < key:
+                if children[i] is None:
+                    break
+                start = children[i]
+                elements = start.elements
+                children = start.children
+                i = self._ceil_in_node(key, start)
+            else:
+                # previous element in node has same key
+                elements[i - 1]["value"] = value
+                inserted = True
+                break
+        
+        if inserted:
+            return
+        # otherwise, in start there's a reference to the node to insert
+        # the element into
+        if start.is_full():
+            # call split
+        else:
+            start.add_element(key, value)
+            start._size += 1
+
+    def _ceil_in_node(self, key, node):
+        # returns the index of the smallest node element that has a key > to
+        # the given one, or node.size if all the elements in the node have key
+        # <= to the given key
+        elements = node.elements()
+        for i in range(node.size):
+            # if the element in already in the node, substitute it
+            if elements[i]["key"] > key:
+                return i
+        return i
+
+
     """
     def _add_root(self, k, v) -> _Node:
         list = list[self.order_d*None]

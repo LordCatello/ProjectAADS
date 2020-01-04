@@ -48,6 +48,10 @@ class Node:
     def children(self):
         return self._struct[0]["children"]
 
+    @property
+    def elements(self):
+        return self._struct[0]["elements"]
+
     def is_full(self) -> bool:
         return self.size == len(self._struct[0]["elements"])
 
