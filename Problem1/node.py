@@ -1,13 +1,14 @@
 import numpy as np
-import platform
 
 UINT = np.uint32
 
+
 class Node:
-    def __init__(self, pair_type, max_number_of_children, parent = None):
+    def __init__(self, pair_type, max_number_of_children, parent=None):
         """
         Note:
-        If you want to use a string, you have to use a dtype, str does not work, bceause you have to specify the dim of the str
+        If you want to use a string, you have to use a dtype, str does not work, bceause you have to specify the dim
+        of the str
         for example you can specify np.dtype('U16') for a 16 char string.
         In general, If you want to use an object, you have to define a dtype object, for the same reason of the str
         (Node need to know the dimension of the memory to allocate).
@@ -15,10 +16,12 @@ class Node:
 
         # defines the "node" type
         # I have to do this If I want that all the node is stored in a contiguous block of memory
-        node_type = np.dtype([("size", UINT), ("elements", pair_type, max_number_of_children - 1), ("children", Node, max_number_of_children), ("parent", Node)])
+        node_type = np.dtype([("size", UINT), ("elements", pair_type, max_number_of_children - 1),
+                              ("children", Node, max_number_of_children), ("parent", Node)])
 
         # It creates a contiguous memory block (an array). The array is of one element, because we have
-        # previously defined a dtype that is a struct, containing the size, the elements (array), the children (array), the parent.
+        # previously defined a dtype that is a struct, containing the size, the elements (array), the children (
+        # array), the parent.
         self._struct = np.empty(shape=1, dtype=node_type)
 
         # size is the number of elements in the 'elements' array
@@ -75,7 +78,6 @@ class Node:
         self.size = self.size - 1
         return removed
 
-
     def add_element(self, key, value):
         """
         Adds an element (pair key,value), to the node.
@@ -101,16 +103,16 @@ class Node:
         if self._struct[0]["elements"][index]["key"] != key:
             # Move all the elements greater than key and add the element to the index position.
             for i in range(index, self.size):
-                self._struct[0]["elements"][self.size + index - i] = self._struct[0]["elements"][self.size + index - i - 1]
+                self._struct[0]["elements"][self.size + index - i] = self._struct[0]["elements"][
+                    self.size + index - i - 1]
             self.size = self.size + 1
 
         # Insert the element in index
         self._struct[0]["elements"][index] = (key, value)
 
-
     def find_element_index(self, key) -> int:
         """
-        Find the index of the element.
+        Find the index of the element using binary search.
 
         :param key:     The key of the element
 
@@ -118,19 +120,21 @@ class Node:
                         otherwise returns the index where the element should be stored.
         """
 
-        # we have to implement a binary search, not a linear search
-        found = False
-        i = 0
-        index = None
+        left = 0
+        right = self.size
 
-        while not found:
-            if i == self.size or self._struct[0]["elements"][i]["key"] >= key:
-                index = i
-                found = True
+        while left < right:
+            middle = (left + right) // 2
+            middle_key = self.get_element_by_index(middle)["key"]
+            if middle_key < key:
+                left = middle + 1
+            elif middle_key > key:
+                right = middle
+            else:
+                return middle
 
-            i += 1
-
-        return index
+        # if the element is not found, i return the index at which the element should be inserted
+        return left
 
     def get_element_by_index(self, index: int):
         """

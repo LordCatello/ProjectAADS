@@ -1,9 +1,7 @@
+import numpy as np
 from btree import BTree
 from node import Node
-from test_functions import random_int
-from test_functions import build_tree
 from test_functions import check_tree
-import numpy as np
 
 """
 Test file
@@ -42,7 +40,7 @@ tree._root = element1
 tree._size += 4
 
 print(tree.__getitem__("cecilia"))
-# tree.inorder_vist()
+# tree.inorder_visit()
 
 for el in tree.__iter__():
     print(el)

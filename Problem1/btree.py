@@ -1,13 +1,14 @@
-import numpy as np
 import platform
-from node import Node
 from collections import MutableMapping
 from math import ceil
-from math import floor
+
+import numpy as np
+from node import Node
 
 BLOCK_DIM = 1024
 UINT = np.uint32
 POINTER_DIM = int(platform.architecture()[0][:2]) // 8
+
 
 class BTree(MutableMapping):
     __slots__ = "_root", "_size", "_key_type", "_value_type", "_order", "_min_internal_num_children"
@@ -46,7 +47,7 @@ class BTree(MutableMapping):
             return None
         else:
             current_node, index = self._get_node_and_index(key)
-            if current_node == None:
+            if current_node is None:
                 return current_node
             else:
                 if self.is_root(current_node) or current_node.size > self.min_internal_num_children - 1:
@@ -55,10 +56,6 @@ class BTree(MutableMapping):
                         return current_node.remove_element_by_index(index)
                     else:
                         pass
-
-
-
-
 
     def __getitem__(self, key):
         """
@@ -76,7 +73,6 @@ class BTree(MutableMapping):
         node, index = self._get_node_and_index(key)
         return node.elements[index]['value']
 
-
     def __len__(self) -> int:
         return self._size
 
@@ -84,12 +80,12 @@ class BTree(MutableMapping):
         return node == self._root
 
     def _get_node_and_index(self, key):
-        '''
+        """
 
         :param key: The key of the element.
         :return: The node and the index of the array corresponding to the key, if the key is found,
                  None otherwise.
-        '''
+        """
         current_node = self._root
 
         while current_node is not None:
@@ -107,8 +103,7 @@ class BTree(MutableMapping):
 
         return None
 
-
-    def inorder_vist(self):
+    def inorder_visit(self):
         """
         In-Order visit of the tree.
         The visit takes O(n).
@@ -117,7 +112,6 @@ class BTree(MutableMapping):
         """
 
         self._inorder_visit_recursive(self._root)
-
 
     def _inorder_visit_recursive(self, node):
         # I have to define a new function, because I need to pass as parameter the node
@@ -139,7 +133,6 @@ class BTree(MutableMapping):
 
         self._inorder_visit_recursive(children[node.size])
 
-
     def __iter__(self):
         """
         Returns an iterator over the elements the tree.
@@ -150,7 +143,6 @@ class BTree(MutableMapping):
         """
 
         return self._iter_inorder(self._root)
-
 
     def _iter_inorder(self, node):
         if node is None:
@@ -168,7 +160,6 @@ class BTree(MutableMapping):
 
         yield from self._iter_inorder(children[node.size])
 
-
     def __setitem__(self, k, v) -> None:
         pass
 
@@ -178,7 +169,7 @@ class BTree(MutableMapping):
     def after(self, node, index):
         current_node = node
         after_node = current_node.get_child_by_index(index + 1)
-        while(after_node is not None):
+        while after_node is not None:
             if after_node.get_child_by_index(0) is None:
                 return after_node.elements[0]
             else:
@@ -188,14 +179,13 @@ class BTree(MutableMapping):
     def before(self, node, index):
         current_node = node
         before_node = current_node.get_child_by_index(index)
-        while (before_node is not None):
+        while before_node is not None:
             last_index = before_node.size
             if before_node.get_child_by_index(last_index) is None:
                 return before_node.elements[last_index - 1]
             else:
                 before_node = before_node.get_child_by_index(last_index)
         return None
-
 
     def _compute_order(self) -> int:
         """
@@ -215,7 +205,6 @@ class BTree(MutableMapping):
 
         order = (remaining_dim + pair_dim) // (pair_dim + node_dim)
         return order
-
 
     def insert_item(self, key, value):
         if self.is_empty():
@@ -252,7 +241,7 @@ class BTree(MutableMapping):
                 elements[i - 1]["value"] = value
                 inserted = True
                 break
-            
+
         if inserted:
             return
         # otherwise, in start there's a reference to the node to insert
@@ -265,7 +254,7 @@ class BTree(MutableMapping):
             start._size += 1
 
     def _split_and_insert(self, key, value, node):
-        median = floor(node.size/2)
+        median = node.size // 2
         # Create new node
         pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
         new_node = Node(pair_type, self._order)
@@ -278,10 +267,3 @@ class BTree(MutableMapping):
         - devo spostare i child, solo che non c'è la add_child in Node
         - Devo gestire la propagazione dell'overflow
         """
-
-
-
-
-
-
-
