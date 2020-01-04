@@ -65,12 +65,15 @@ class Node:
             if self.elements[index]["key"] != key:
                 return -1
             else:
-                removed = self.elements[index]
-                for i in range(index, self.size):
-                    self.elements[index] = self.elements[index+1]
-                self.size = self.size - 1
-                return removed
+                return self.remove_element_by_index(index)
 
+    def remove_element_by_index(self, index):
+
+        removed = self.elements[index]
+        for i in range(index, self.size):
+            self.elements[index] = self.elements[index + 1]
+        self.size = self.size - 1
+        return removed
 
 
     def add_element(self, key, value):

@@ -46,7 +46,18 @@ class BTree(MutableMapping):
             return None
         else:
             current_node, index = self._get_node_and_index(key)
-            
+            if current_node == None:
+                return current_node
+            else:
+                if self.is_root(current_node) or current_node.size > self.min_internal_num_children - 1:
+                    after_node = current_node.get_child_by_index[index + 1]
+                    if after_node is None:
+                        return current_node.remove_element_by_index(index)
+                    else:
+                        pass
+
+
+
 
 
     def __getitem__(self, key):
@@ -163,6 +174,17 @@ class BTree(MutableMapping):
 
     def is_empty(self) -> bool:
         return self._size == 0
+
+    def after(self, node, index):
+        current_node = node
+        after_node = current_node.get_child_by_index(index + 1)
+        while(after_node is not None):
+            if after_node.get_child_by_index(0) is None:
+                return after_node.elements[0]
+            else:
+                after_node = after_node.get_child_by_index(0)
+        return None
+
 
     def _compute_order(self) -> int:
         """
