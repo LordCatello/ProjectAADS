@@ -117,6 +117,16 @@ class Node:
 
         return self._struct[0]["children"][index]
 
+    def ceil_in_node(self, key):
+        # returns the index of the smallest node element that has a key > to
+        # the given one, or node.size if all the elements in the node have key
+        # <= to the given key
+        elements = self.elements()
+        for i in range(self.size):
+            # if the element in already in the node, substitute it
+            if elements[i]["key"] > key:
+                return i
+        return i
 
 
 

@@ -2,6 +2,7 @@ import numpy as np
 import platform
 from node import Node
 from collections import MutableMapping
+from math import floor
 
 BLOCK_DIM = 1024
 UINT = np.uint32
@@ -99,44 +100,38 @@ class BTree(MutableMapping):
 
     def _insert_existing(self, key, value):
         inserted = False
+        start = self._root
         while True:
-            start = self._root
-            i = self._ceil_in_node(key, start)
+            i = start.ceil_in_node(key, start)
             elements = start.elements
             children = start.children
             if i == 0 or elements[i - 1] < key:
                 if children[i] is None:
                     break
                 start = children[i]
-                elements = start.elements
-                children = start.children
-                i = self._ceil_in_node(key, start)
             else:
                 # previous element in node has same key
                 elements[i - 1]["value"] = value
                 inserted = True
                 break
-        
+            
         if inserted:
             return
         # otherwise, in start there's a reference to the node to insert
         # the element into
         if start.is_full():
             # call split
+            self._split_and_insert(key, value, start)
         else:
             start.add_element(key, value)
             start._size += 1
 
-    def _ceil_in_node(self, key, node):
-        # returns the index of the smallest node element that has a key > to
-        # the given one, or node.size if all the elements in the node have key
-        # <= to the given key
-        elements = node.elements()
-        for i in range(node.size):
-            # if the element in already in the node, substitute it
-            if elements[i]["key"] > key:
-                return i
-        return i
+    def _split_and_insert(self, key, value, node):
+        median = floor(node.size/2)
+
+
+
+
 
 
     """
