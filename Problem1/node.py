@@ -57,6 +57,22 @@ class Node:
     def is_empty(self) -> bool:
         return self.size == 0
 
+    def remove_element(self, key):
+
+        if self.is_empty():
+            return -1
+        else:
+            index = self.find_element_index(key)
+            if self.elements[index]["key"] != key:
+                return -1
+            else:
+                removed = self.elements[index]
+                for i in range(index, self.size):
+                    self.elements[index] = self.elements[index+1]
+                return removed
+
+
+
     def add_element(self, key, value):
         """
         Adds an element (pair key,value), to the node.
