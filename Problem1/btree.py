@@ -143,6 +143,20 @@ class BTree(MutableMapping):
 
     def _split_and_insert(self, key, value, node):
         median = floor(node.size/2)
+        # Create new node
+        pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
+        new_node = Node(pair_type, self._order)
+        # Move some elements to new node
+
+        """
+        Problemi:
+        - Devo spostare elementi da node a quello nuovo, quindi mi serve un modo per "mettere a null" gli elementi
+        rimossi nel vecchio nodo
+        - devo spostare i child, solo che non c'è la add_child in Node
+        - Devo gestire la propagazione dell'overflow
+        """
+
+
 
 
 
