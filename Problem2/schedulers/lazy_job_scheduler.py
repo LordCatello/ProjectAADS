@@ -1,7 +1,7 @@
 from typing import Optional
 
 from .base_job_scheduler import BaseJobScheduler
-from ..dependencies.book_external.list.positional_list import PositionalList
+from ..dependencies.list.positional_list import PositionalList
 
 
 class LazyJobScheduler(BaseJobScheduler):
@@ -56,7 +56,7 @@ class LazyJobScheduler(BaseJobScheduler):
         priority_job_position = self._priority_queue.first()
 
         # I can't iterate with __iter__ because PositionalList returns an iterator over elements, when I want to keep
-        #  track of where the job is stored in the list, in order to remove it at the end in O(1).
+        # track of where the job is stored in the list, in order to remove it at the end in O(1).
         current_job_position = priority_job_position
         while current_job_position is not None:
             current_job = current_job_position.element()
