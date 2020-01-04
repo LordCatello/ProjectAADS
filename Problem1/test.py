@@ -1,5 +1,7 @@
 from btree import BTree
 from node import Node
+from test_functions import random_int
+from test_functions import build_tree
 import numpy as np
 
 """
@@ -27,3 +29,6 @@ tree.inorder_vist()
 
 for el in tree.__iter__():
     print(el)
+
+# use this function to build a tree
+# build_tree(100, int, int, random_int, random_int)

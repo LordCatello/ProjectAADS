@@ -1,6 +1,5 @@
 import numpy as np
 import platform
-from sys import getsizeof
 
 UINT = np.uint32
 
