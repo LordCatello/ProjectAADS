@@ -33,8 +33,8 @@ element3.parent = element1
 
 element4 = Node(pair_type, tree._order)
 element4.add_element("zi", 1)
-element3.add_element("zo", 2)
-element3.add_element("zu", 3)
+element4.add_element("zo", 2)
+element4.add_element("zu", 3)
 element1._struct[0]["children"][3] = element4
 element4.parent = element1
 
@@ -51,5 +51,9 @@ print(check_tree(tree))
 print(tree.after(element1, 0))
 print(tree.after(element3, 1))
 print(tree.after(element1, 2))
+
+print(tree.before(element1, 0))
+print(tree.before(element1, 1))
+print(tree.before(element3, 1))
 # use this function to build a tree
 # build_tree(100, int, int, random_int, random_int)

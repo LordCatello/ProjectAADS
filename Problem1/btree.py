@@ -185,6 +185,17 @@ class BTree(MutableMapping):
                 after_node = after_node.get_child_by_index(0)
         return None
 
+    def before(self, node, index):
+        current_node = node
+        before_node = current_node.get_child_by_index(index)
+        while (before_node is not None):
+            last_index = before_node.size
+            if before_node.get_child_by_index(last_index) is None:
+                return before_node.elements[last_index - 1]
+            else:
+                before_node = before_node.get_child_by_index(last_index)
+        return None
+
 
     def _compute_order(self) -> int:
         """
