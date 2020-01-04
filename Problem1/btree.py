@@ -151,6 +151,7 @@ class BTree(MutableMapping):
         order = (remaining_dim + pair_dim) // (pair_dim + node_dim)
         return order
 
+
     def insert_item(self, key, value):
         if self.is_empty():
             # create new node
