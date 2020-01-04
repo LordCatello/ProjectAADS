@@ -122,11 +122,21 @@ class Node:
         :return:            Returns the element stored in index position.
         :raise IndexError   Raise an exception if the index is out of bounds of the logical size of the array.
         """
-
         if index >= self.size or index < 0:
             raise IndexError
 
         return self._struct[0]["elements"][index]
+
+    def ceil_in_node(self, key):
+        # returns the index of the smallest node element that has a key > to
+        # the given one, or node.size if all the elements in the node have key
+        # <= to the given key
+        elements = self.elements()
+        for i in range(self.size):
+            # if the element in already in the node, substitute it
+            if elements[i]["key"] > key:
+                return i
+        return i
 
     def get_child_by_index(self, index: int) -> "Node":
         """
