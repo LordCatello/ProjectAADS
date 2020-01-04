@@ -32,3 +32,58 @@ def random_int() -> int:
     """
 
     return randint(0, 100)
+
+
+def check_tree(tree: BTree) -> bool:
+    """
+    Checks if the tree is a BTree.
+    Return true if:
+    1) the tree is ordered (the in-order visit is correct)
+    2) each internal node has at most order children and at least min_number_children
+    
+    :param tree:    The tree on which the check is performed.
+    :return:        Return true if the tree is a BTree.
+                    False otherwise.
+    """
+
+    is_btree = True
+
+    # in-order check
+    prec = None
+    for el in tree.__iter__():
+        if prec is not None:
+            # the in-order visit is not correct
+            if prec > el["key"]:
+                return False
+
+        prec = el["key"]
+
+    # children check
+    b = tree.order
+    a = tree.min_internal_num_children
+
+    return _check_a_b_property(a, b, tree.root)
+
+
+def _check_a_b_property(a: int, b: int, node: "Node") -> bool:
+    """
+    Returns True if the a b property is verified.
+    """
+    if node is None:
+        return True
+
+    if node.size > (b - 1):
+        return False
+
+    # if the node is not the root
+    if node.parent is not None:
+        if node.size < (a - 1):
+            return False
+
+    # check the property for all the children
+    for child in node.children:
+        if not _check_a_b_property(a, b, child):
+            return False
+
+    return True
+
