@@ -2,6 +2,7 @@ import numpy as np
 import platform
 from node import Node
 from collections import MutableMapping
+from math import ceil
 from math import floor
 
 BLOCK_DIM = 1024
@@ -26,7 +27,19 @@ class BTree(MutableMapping):
         self._key_type = key_type
         self._value_type = value_type
         self._order = self._compute_order()
-        self._min_internal_num_children = self._order // 2
+        self._min_internal_num_children = ceil((self._order - 1) // 2)
+
+    @property
+    def order(self) -> int:
+        return self._order
+
+    @property
+    def min_internal_num_children(self) -> int:
+        return self._min_internal_num_children
+
+    @property
+    def root(self) -> Node:
+        return self._root
 
     def __delitem__(self, key):
         if self.is_empty():
