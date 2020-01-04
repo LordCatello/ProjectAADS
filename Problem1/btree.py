@@ -251,7 +251,8 @@ class BTree(MutableMapping):
             self._split_and_insert(key, value, start)
         else:
             start.add_element(key, value)
-            start._size += 1
+            # DANGEROUS, it does not have a _size property and the add_element already adds 1 to the size:
+            # size._size += 1
 
     def _split_and_insert(self, key, value, node):
         median = node.size // 2
