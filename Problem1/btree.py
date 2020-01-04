@@ -12,16 +12,18 @@ class BTree(MutableMapping):
 
     def __init__(self, key_type, value_type):
         """
-        size:   Number of elements
+        Builds an instance of a BTree.
+        d (the maximum number of children), is not a parameter. It depends on the dimension of a memory block.
+        It is assumed, for this exercise, that the dimension of the memory block is BLOCK_DIM bytes.
 
+        :param key_type:         The type of the key.
+        :param value_type:       The type of the value.
         """
 
         self._root = None
         self._size = 0
         self._key_type = key_type
         self._value_type = value_type
-
-        # note that an internal node
         self._order = self._compute_order()
         self._min_internal_num_children = self._order // 2
 
@@ -29,6 +31,19 @@ class BTree(MutableMapping):
         pass
 
     def __getitem__(self, key):
+        """
+        Returns the value given the key.
+        The time complexity of this function is ( f(d) / (log(d-1) ) * log (n)
+        where:
+        n is the number of elements
+        d the maximum number of children
+        f(d) the time needed to search an item in a node. It's log(d) if the binary search algorithm is used.
+
+        :param key      The key of the element.
+        :return:        The value corresponding to the key, if the key is found,
+                        None otherwise.
+        """
+
         current_node = self._root
 
         while current_node is not None:
@@ -78,24 +93,3 @@ class BTree(MutableMapping):
         order = (remaining_dim + pair_dim) // (pair_dim + node_dim)
         return order
 
-    """
-    def _add_root(self, k, v) -> _Node:
-        list = list[self.order_d*None]
-        list = np.ascontiguousarray(list)
-        root = _Node.__init__(list[self.order_d*None], None)
-    """
-
-tree = BTree(np.dtype('U16'), int)
-
-pair_type = np.dtype([("key", tree._key_type), ("value", tree._value_type)])
-
-element1 = Node(pair_type, tree._order)
-element1.add_element("carmine", 3)
-element1.add_element("pippo", 58)
-element1.add_element("zelda", 3)
-
-tree._root = element1
-tree._size += 3
-
-print(element1._struct.itemsize)
-print(tree.__getitem__("pippo"))
