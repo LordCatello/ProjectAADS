@@ -64,9 +64,66 @@ class BTree(MutableMapping):
     def __len__(self) -> int:
         return self._size
 
-    # what type of visit I have to perform? Inorder?
+    def inorder_vist(self):
+        """
+        In-Order visit of the tree.
+        The visit takes O(n).
+
+        Prints to the standard output all the element of the tree visited in-order (crescent order of the key).
+        """
+
+        self._inorder_visit_recursive(self._root)
+
+
+    def _inorder_visit_recursive(self, node):
+        # I have to define a new function, because I need to pass as parameter the node
+        # I can't do this in inorder_visit because the function is public and the user should
+        # not pass the node as parameter.
+
+        if node is None:
+            return
+
+        if node.size <= 0:
+            return
+
+        elements = node.elements
+        children = node.children
+
+        for i in range(node.size):
+            self._inorder_visit_recursive(children[i])
+            print(elements[i])
+
+        self._inorder_visit_recursive(children[node.size])
+
+
     def __iter__(self):
-        pass
+        """
+        Returns an iterator over the elements the tree.
+
+        The elements are returned in a crescent order (in-order visit).
+
+        :return:    an iterator over the elements of the tree.
+        """
+
+        return self._iter_inorder(self._root)
+
+
+    def _iter_inorder(self, node):
+        if node is None:
+            return
+
+        if node.size <= 0:
+            return
+
+        elements = node.elements
+        children = node.children
+
+        for i in range(node.size):
+            yield from self._iter_inorder(children[i])
+            yield elements[i]
+
+        yield from self._iter_inorder(children[node.size])
+
 
     def __setitem__(self, k, v) -> None:
         pass

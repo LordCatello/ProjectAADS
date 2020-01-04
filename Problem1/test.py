@@ -23,3 +23,7 @@ tree._root = element1
 tree._size += 4
 
 print(tree.__getitem__("cecilia"))
+tree.inorder_vist()
+
+for el in tree.__iter__():
+    print(el)
