@@ -46,6 +46,8 @@ for el in tree.__iter__():
     print(el)
 
 print(check_tree(tree))
+
+"""
 print(tree.after(element1, 0))
 print(tree.after(element3, 1))
 print(tree.after(element1, 2))
@@ -53,5 +55,7 @@ print(tree.after(element1, 2))
 print(tree.before(element1, 0))
 print(tree.before(element1, 1))
 print(tree.before(element3, 1))
+"""
+
 # use this function to build a tree
 # build_tree(100, int, int, random_int, random_int)

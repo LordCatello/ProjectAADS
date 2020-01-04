@@ -28,6 +28,9 @@ class BTree(MutableMapping):
         self._key_type = key_type
         self._value_type = value_type
         self._order = self._compute_order()
+        # _min_internal_num_children should be at least 2, so order should be at least 4
+        if self._order < 4:
+            self._order = 4
         self._min_internal_num_children = int(ceil((self._order - 1) / 2))
 
     @property
