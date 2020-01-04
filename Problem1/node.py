@@ -3,7 +3,6 @@ import platform
 from sys import getsizeof
 
 UINT = np.uint32
-POINTER_SIZE = int(platform.architecture()[0][:2]) // 8
 
 class Node:
     def __init__(self, pair_type, max_number_of_children, parent = None):
@@ -62,7 +61,7 @@ class Node:
         """
         Adds an element (pair key,value), to the node.
         If key is already present the new value is stored.
-        Takes O(n) because the elements are ordered.
+        Takes O(n) because the elements are ordered and the order have to be preserved.
 
         :param key:         The key of the element
         :param value:       The value of the element
@@ -91,6 +90,15 @@ class Node:
 
 
     def find_element_index(self, key) -> int:
+        """
+        Find the index of the element.
+
+        :param key:     The key of the element
+
+        :return:        If the element is found returns the index of the element,
+                        otherwise returns the index where the element should be stored.
+        """
+
         # we have to implement a binary search, not a linear search
         found = False
         i = 0
@@ -105,17 +113,19 @@ class Node:
 
         return index
 
-    def get_element_by_index(self, index):
+    def get_element_by_index(self, index: int):
+        """
+        Returns an element given the index.
+
+        :param index:       The index of the element
+
+        :return:            Returns the element stored in index position.
+        :raise IndexError   Raise an exception if the index is out of bounds of the logical size of the array.
+        """
         if index >= self.size or index < 0:
             raise IndexError
 
         return self._struct[0]["elements"][index]
-
-    def get_child_by_index(self, index):
-        if index >= self.size + 1 or index < 0:
-            raise IndexError
-
-        return self._struct[0]["children"][index]
 
     def ceil_in_node(self, key):
         # returns the index of the smallest node element that has a key > to
@@ -128,25 +138,17 @@ class Node:
                 return i
         return i
 
+    def get_child_by_index(self, index: int) -> "Node":
+        """
+        Returns a child given the index.
 
+        :param index:       The index of the child.
 
-# peppe = Node(np.dtype('U16'), np.dtype(np.int32), 1024)
-# element1 = Node(np.dtype(np.int64), np.dtype(np.int64), 256)
-pair_type = np.dtype([("key", np.dtype('U16')), ("value", int)])
+        :return:            Returns the child stored in index position.
+        :raise IndexError   Raise an exception if the index is out of bounds of the logical size of the array.
+        """
 
-element1 = Node(pair_type, 5)
+        if index >= self.size + 1 or index < 0:
+            raise IndexError
 
-element1.add_element("carmine", 3)
-element1.add_element("pippo", 3)
-element1.add_element("zelda", 5)
-element1.add_element("camillo", 9)
-
-print(element1._struct)
-
-"""
-print(element1._struct.itemsize)
-print(element1._struct[0]["size"].itemsize)
-print(element1._struct[0]["elements"].itemsize)
-print(element1._struct[0]["children"].itemsize)
-# print(element1._struct[0]["parent"].itemsize)
-"""
+        return self._struct[0]["children"][index]
