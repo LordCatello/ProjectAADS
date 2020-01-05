@@ -51,17 +51,43 @@ class BTree(MutableMapping):
             if current_node is None:
                 return current_node
             else:
-                if self.is_root(current_node) or current_node.size > self._min_internal_num_children - 1:
-                    after_node, after_index, index_from_parent = self.after_node_index(current_node, index)
-                    if after_node is None:
+                if current_node.is_leaf():
+                    if current_node.size > self.min_internal_num_children - 1:
                         return current_node.remove_element_by_index(index)
                     else:
-                        to_remove = current_node.get_element_by_index(index)
-                        current_node.elements[index] = after_node.get_element_by_index(0)
-                        after_node.elements[0] = to_remove
-                        return self.remove_item(after_node, 0, index_from_parent)
+                        return self._delete_underflow(current_node,index)
                 else:
-                    self.remove_item(current_node, index, current_index_from_parent)
+                    after_node,after_index=self._swap_with_successor(current_node,index)
+                    return self.remove_item(after_node,after_index)
+                """
+                if self.is_root(current_node) or current_node.size > self._min_internal_num_children - 1:
+                    # I am the root or an internal node that will not be affected by underflow
+                    # after_index should be always 0
+                    if current_node.is_leaf():
+                        return current_node.remove_element_by_index(index)
+                    else:
+                        # I am not a leaf, so i swap the element to be deleted with its successor and
+                        # delete it
+                        after_node,after_index = self._swap_with_successor(current_node,index)
+                        return self.remove_item(after_node, after_index)
+                else:
+                    if current_node.is_leaf():
+                        # I am a leaf and i cant delete the element safely
+                        return self._delete_underflow(current_node,index)
+                    else:
+                        # i am not the root and i cant delete the element safely, but i still need to swap
+                        # the element with is successor
+                        after_node, after_index = self._swap_with_successor(current_node, index)
+                        return self.remove_item(after_node, after_index)
+                """
+
+    def _swap_with_successor(self,current_node,index):
+        after_node, after_index, index_from_parent = self.after_node_index(current_node, index)
+        to_remove = current_node.get_element_by_index(index)
+        current_node.elements[index] = after_node.get_element_by_index(after_index)
+        after_node.elements[after_index] = to_remove
+        return (after_node,after_index)
+
 
     def _delete_underflow(self, node: Node, index_to_delete):
         """
@@ -69,10 +95,10 @@ class BTree(MutableMapping):
         It firstly tries to make a transfer, otherwise it makes a fusion of nodes.
         In this case, it then restores the tree after an underflow by going upwards.
         """
-
+        """
         if node.size >= self._min_internal_num_children - 1:  # tree restored
             return
-
+        """
         # can a transfer be executed?
         parent = node.parent
         index_from_parent = node.get_index_from_parent()
@@ -92,18 +118,64 @@ class BTree(MutableMapping):
 
         # no! a fusion is necessary
         if left_sibling is not None:
-            # fusion left
-            pass
+            removed = node.get_element_by_index(index_to_delete)
+            self.fusion_left(parent, index_from_parent, node, index_to_delete, left_sibling)
+            self.remove_item(parent,index_from_parent)
+            return removed
+        elif right_sibling is not None:
+            removed = node.get_element_by_index(index_to_delete)
+            self.fusion_right(parent, index_from_parent, node, index_to_delete, right_sibling)
+            self.remove_item(parent, index_from_parent)
+            return removed
 
 
 
+    def fusion_left(self,parent, middle_index, current_node, index_to_remove, left_node):
+        pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
+        new_node = Node(pair_type, self.order)
+        for i in range(left_node.size):
+            new_node.add_element(left_node.get_element_by_index(i))
+        new_node.add_element(parent.get_element_by_index(middle_index))
+        for i in range(current_node.size):
+            element = current_node.get_element_by_index(i)
+            if not (element['key'] == current_node.get_element_by_index(index_to_remove)['key']):
+                new_node.add_element(element)
+        new_node.parent = parent
+        # parent.update_children()
+        for i in range(middle_index, parent.size):
+            if i == middle_index:
+                parent.chidren[i] = new_node
+            else:
+                parent.chidren[i] = parent.chidren[i + 1]
 
 
-    def remove_item(self, node, index, index_from_parent):
+    def fusion_right(self,parent, middle_index, current_node, index_to_remove, right_node):
+        pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
+        new_node = Node(pair_type, self.order)
+        for i in range(current_node.size):
+            element = current_node.get_element_by_index(i)
+            if not (element['key'] == current_node.get_element_by_index(index_to_remove)['key']):
+                new_node.add_element(element)
+        new_node.add_element(parent.get_element_by_index(middle_index))
+        for i in range(right_node.size):
+            new_node.add_element(right_node.get_element_by_index(i))
+        new_node.parent = parent
+        # parent.update_children()
+        for i in range(middle_index, parent.size):
+            if i == middle_index:
+                parent.chidren[i] = new_node
+            else:
+                parent.chidren[i] = parent.chidren[i + 1]
+
+    def remove_item(self, node, index):
+
         if node.size > self.min_internal_num_children - 1:
             return node.remove_element_by_index(index)
         else:
+            return self._delete_underflow(node,index)
+            """
             parent = node.parent
+            index_from_parent = node.get_index_from_parent()
 
             if index_from_parent != 0 and parent.chidren[index_from_parent - 1].size > self._min_internal_num_children - 1:
 
@@ -135,7 +207,7 @@ class BTree(MutableMapping):
                         parent.chidren[i] = new_node
                     else:
                         parent.chidren[i] = parent.chidren[i+1]
-
+                """
     def transfer_left(self, parent, middle_index, current_node, index_to_remove, left_node):
         middle_element = parent.elements[middle_index]
         removed = current_node.remove_element_by_index(index_to_remove)
@@ -355,39 +427,51 @@ class BTree(MutableMapping):
         # increase size
         self._size += 1
 
-    def _insert_existing(self, key, value):
-        inserted = False
+    def _insertion_point(self, key, value):
+        """
+        If the given key is already in the tree, it substitutes its value with the given one. Otherwise,
+        it returns the node in which the (key,value) pair must be inserted.
+
+        :param key: the key to be inserted as new element in the tree.
+        :param value: the value to be associated with the given key.
+        :return: None if the key is already in the tree, or the node in which it must be inserted.
+        """
         start = self._root
 
         while True:
-            i = start.ceil_in_node(key)
+            i = start.ceil_in_node(key)  # get the index of the smallest key in the node > the given one
             elements = start.elements
             children = start.children
-            if i == 0 or elements[i - 1] < key:
+            if i == 0 or elements[i - 1]["key"] < key:
                 if children[i] is None:
-                    break
+                    return start
                 start = children[i]
             else:
-                # previous element in node has same key
+                # i is != 0 and the previous element's key is not smaller than
+                # the given one, but it is neither greater, so we have that
+                # previous element in node has same key as given one
                 elements[i - 1]["value"] = value
-                inserted = True
-                break
+                print("chiave esistente")  # DEBUG
+                return None
 
-        if inserted:
-            return  # consider moving this in the else branch of if statement
 
+    def _insert_existing(self, key, value):
+        insert_at = self._insertion_point(key, value)
+        if insert_at is None:
+            return
+
+        # otherwise, in start there's a reference to the node to insert
+        # the element into
         # otherwise I have to insert the element in a leaf
         # we use this array because we can't append a new child to the children of a node if is full,
         # because the array is static
         children = []
         # I add another child, because the node will contain another element
-        for i in range(start.size + 2):
+        for i in range(insert_at.size + 2):
             # the node is a leaf, so the children are all None
             children.append(None)
 
-        self._insert_new_element_in_a_node(key, value, start, children)
-
-        self._size += 1
+        self._insert_new_element_in_a_node(key, value, insert_at, children)
 
 
     def _insert_new_element_in_a_node(self, key, value, node: "Node", children: ["Node"]):
