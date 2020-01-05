@@ -33,19 +33,24 @@ element4 = Node(pair_type, tree._order)
 element4.add_element("zi", 1)
 element4.add_element("zo", 2)
 element4.add_element("zu", 3)
-element1._struct[0]["children"][3] = element4
+#element1._struct[0]["children"][3] = element4
 element4.parent = element1
 
 tree._root = element1
 tree._size += 4
 
-print(tree.__getitem__("cecilia"))
-# tree.inorder_visit()
+# print(tree.__getitem__("cecilia"))
+# # tree.inorder_visit()
+#
+# for el in tree:
+#     print(el)
+#
+# print(check_tree(tree))
 
-for el in tree.__iter__():
-    print(el)
+for node in element2.children:
+    print(node)
 
-print(check_tree(tree))
+print(element2.is_leaf())
 
 """
 print(tree.after(element1, 0))

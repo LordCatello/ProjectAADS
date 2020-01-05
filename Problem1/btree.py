@@ -1,13 +1,14 @@
 import numpy as np
 import platform
-from node import Node
+from .node import Node
 from collections import MutableMapping
 from math import ceil
 from math import floor
-
+from typing import Tuple, Optional
 BLOCK_DIM = 1024
 UINT = np.uint32
 POINTER_DIM = int(platform.architecture()[0][:2]) // 8
+
 
 class BTree(MutableMapping):
     __slots__ = "_root", "_size", "_key_type", "_value_type", "_order", "_min_internal_num_children"
@@ -27,7 +28,7 @@ class BTree(MutableMapping):
         self._key_type = key_type
         self._value_type = value_type
         self._order = self._compute_order()
-        self._min_internal_num_children = ceil((self._order - 1) // 2)
+        self._min_internal_num_children = int(ceil((self._order - 1) / 2))
 
     @property
     def order(self) -> int:
@@ -43,9 +44,10 @@ class BTree(MutableMapping):
 
     def __delitem__(self, key):
         if self.is_empty():
-            return None
+            raise KeyError
         else:
             current_node, index, current_index_from_parent = self._get_node_and_index(key)
+
             if current_node is None:
                 return current_node
             else:
@@ -61,6 +63,41 @@ class BTree(MutableMapping):
                 else:
                     self.remove_item(current_node, index, current_index_from_parent)
 
+    def _delete_underflow(self, node: Node, index_to_delete):
+        """
+        Deletes the element if it's not a naive case.
+        It firstly tries to make a transfer, otherwise it makes a fusion of nodes.
+        In this case, it then restores the tree after an underflow by going upwards.
+        """
+
+        if node.size >= self._min_internal_num_children - 1:  # tree restored
+            return
+
+        # can a transfer be executed?
+        parent = node.parent
+        index_from_parent = node.get_index_from_parent()
+
+        right_sibling, left_sibling = None, None
+
+        if index_from_parent - 1 > 0:
+            left_sibling = parent.children[index_from_parent - 1]
+        if index_from_parent + 1 < parent.size:
+            right_sibling = parent.children[index_from_parent + 1]
+
+        if left_sibling is not None and left_sibling.size >= self._min_internal_num_children:
+            return self.transfer_left(parent, index_from_parent, node, index_to_delete, left_sibling)
+
+        if right_sibling is not None and right_sibling.size >= self._min_internal_num_children:
+            return self.transfer_right(parent, index_from_parent, node, index_to_delete, right_sibling)
+
+        # no! a fusion is necessary
+        if left_sibling is not None:
+            # fusion left
+            pass
+
+
+
+
 
     def remove_item(self, node, index, index_from_parent):
         if node.size > self.min_internal_num_children - 1:
@@ -72,14 +109,12 @@ class BTree(MutableMapping):
 
                 middle_element_index = index_from_parent - 1
                 left_node = parent.chidren[index_from_parent - 1]
-                max_index = left_node.elements.size - 1
-                return self.transfer_left(parent, middle_element_index, node, index, left_node, max_index)
+                return self.transfer_left(parent, middle_element_index, node, index, left_node)
 
             elif parent.chidren[index_from_parent + 1].size > self._min_internal_num_children - 1:
                 middle_element_index = index_from_parent
                 right_node = parent.chidren[index_from_parent + 1]
-                min_index = 0
-                return self.transfer_right(parent, middle_element_index, node, index, right_node, min_index)
+                return self.transfer_right(parent, middle_element_index, node, index, right_node)
 
             else:
                 middle_element_index = index_from_parent - 1
@@ -94,24 +129,24 @@ class BTree(MutableMapping):
                     if not(element['key'] == node.get_element_by_index(index)['key']):
                         new_node.add_element(element)
                 new_node.parent = parent
-                parent.update_children()
+                # parent.update_children()
                 for i in range(middle_element_index, parent.size):
                     if i == middle_element_index:
                         parent.chidren[i] = new_node
                     else:
                         parent.chidren[i] = parent.chidren[i+1]
 
-    def transfer_left(self, parent, middle_index, current_node, index_to_remove, left_node, max_index_left):
+    def transfer_left(self, parent, middle_index, current_node, index_to_remove, left_node):
         middle_element = parent.elements[middle_index]
         removed = current_node.remove_element_by_index(index_to_remove)
-        parent.elements[middle_index - 1] = left_node.remove_element_by_index(max_index_left)
+        parent.elements[middle_index - 1] = left_node.remove_element_by_index(left_node.size - 1)
         current_node.add_element(middle_element['key'], middle_element['value'])
         return removed
 
-    def transfer_right(self, parent, middle_index, current_node, index_to_remove, right_node, min_index_right):
+    def transfer_right(self, parent, middle_index, current_node, index_to_remove, right_node):
         middle_element = parent.elements[middle_index]
         removed = current_node.remove_element_by_index(index_to_remove)
-        parent.elements[middle_index] = right_node.remove_element_by_index(min_index_right)
+        parent.elements[middle_index] = right_node.remove_element_by_index(0)
         current_node.add_element(middle_element['key'], middle_element['value'])  # Maybe necessary do a add element at last position
         return removed
 
@@ -125,26 +160,30 @@ class BTree(MutableMapping):
         f(d) the time needed to search an item in a node. It's log(d) if the binary search algorithm is used.
 
         :param key      The key of the element.
-        :return:        The value corresponding to the key, if the key is found,
-                        None otherwise.
+        :return:        The value corresponding to the key, if the key is found.
+        :raise:         KeyError if the value is not found.
         """
-        node, index, index_from_parent = self._get_node_and_index(key)
-        return node.elements[index]['value']
+        node, index, _ = self._get_node_and_index(key)
+        if node is None or index is None:
+            raise KeyError
+        value = node.elements[index]['value']
+        if value is None:
+            raise KeyError
 
+        return value
 
     def __len__(self) -> int:
         return self._size
 
-    def is_root(self, node):
-        return node == self._root
+    def is_root(self, node: Node) -> bool:
+        return node == self._root and node.is_root()
 
-    def _get_node_and_index(self, key):
-        '''
-
+    def _get_node_and_index(self, key) -> Tuple[Optional[Node], Optional[int], Optional[int]]:
+        """
         :param key: The key of the element.
         :return: The node and the index of the array corresponding to the key, if the key is found,
                  None otherwise.
-        '''
+        """
         current_node = self._root
         index_from_parent = None
 
@@ -164,7 +203,6 @@ class BTree(MutableMapping):
 
         return None, None, None
 
-
     def inorder_vist(self):
         """
         In-Order visit of the tree.
@@ -174,7 +212,6 @@ class BTree(MutableMapping):
         """
 
         self._inorder_visit_recursive(self._root)
-
 
     def _inorder_visit_recursive(self, node):
         # I have to define a new function, because I need to pass as parameter the node
@@ -196,7 +233,6 @@ class BTree(MutableMapping):
 
         self._inorder_visit_recursive(children[node.size])
 
-
     def __iter__(self):
         """
         Returns an iterator over the elements the tree.
@@ -207,7 +243,6 @@ class BTree(MutableMapping):
         """
 
         return self._iter_inorder(self._root)
-
 
     def _iter_inorder(self, node):
         if node is None:
@@ -225,54 +260,62 @@ class BTree(MutableMapping):
 
         yield from self._iter_inorder(children[node.size])
 
-
     def __setitem__(self, k, v) -> None:
         pass
 
     def is_empty(self) -> bool:
         return self._size == 0
 
-    def after_node_index(self, node, index):
+    @staticmethod
+    def after_node_index(node: Node, index: int) -> Tuple[Optional[Node], Optional[int], Optional[int]]:
+        """
+        Finds the successor to the element specified by node and index.
+        :return:
+            Returns a tuple containing the node and the index of the successor element, and the index of this node
+            in the parent's array of children.
+            If everything is None, no successor was found.
+        """
         current_node = node
         after_node = current_node.get_child_by_index(index + 1)
-        while after_node is not None:
-            if after_node.get_child_by_index(0) is None:
-                num_child = index + 1
-                return after_node, 0, num_child
+
+        if after_node is None:
+            # if the node has no children greater than this key, i check in the node
+            if index + 1 < current_node.size:
+                # if there are other items, the successor is the next one
+                return current_node, index + 1, current_node.get_index_from_parent()
             else:
-                after_node = after_node.get_child_by_index(0)
-                index = -1
+                # if this is the last key in the node, i go upwards in the tree
+                key = current_node.get_element_by_index(index)["key"]
+                current_node = current_node.parent
+                while current_node is not None:
+                    parent_key_index = current_node.find_element_index(key)
+                    if parent_key_index < current_node.size:
+                        return current_node, parent_key_index, current_node.get_index_from_parent()
+                    current_node = current_node.parent
+                # there is no successor to this key
+                return None, None, None
+        else:
+            # the node has children greater than this key, so i take the smallest child on the right
+            while after_node is not None:
+                if after_node.get_child_by_index(0) is None:
+                    index_from_parent = index + 1
+                    return after_node, 0, index_from_parent
+                else:
+                    after_node = after_node.get_child_by_index(0)
+                    index = -1
+
         return None, None, None
 
-    def after(self, node, index):
-        after_node, after_index, num = self.after_node_index(node, index)
+    @staticmethod
+    def after(node, index):
+        """
+        :return: The element successor to the element in the specified node at the specified index.
+        """
+        after_node, after_index, _ = BTree.after_node_index(node, index)
         if after_node is None:
             return None
         else:
             return after_node.elements[after_index]
-
-    def before(self, node, index):
-        before_node, before_index, num = self.before_node_index(node, index)
-        if before_node is None:
-            return None
-        else:
-            return before_node.elements[before_index - 1]
-
-    def before_node_index(self, node, index):
-        current_node = node
-        before_node = current_node.get_child_by_index(index)
-        while before_node is not None:
-            last_index = before_node.size
-            num_child = index
-            if before_node.get_child_by_index(last_index) is None:
-                return before_node, last_index, num_child
-            else:
-                before_node = before_node.get_child_by_index(last_index)
-                index = last_index
-
-
-        return None, None, None
-
 
     def _compute_order(self) -> int:
         """
