@@ -72,11 +72,11 @@ class Node:
     def remove_element(self, key):
 
         if self.is_empty():
-            return -1
+            return None
         else:
             index = self.find_element_index(key)
             if self.elements[index]["key"] != key:
-                return -1
+                return None
             else:
                 return self.remove_element_by_index(index)
 
@@ -158,7 +158,7 @@ class Node:
         if index >= self.size or index < 0:
             raise IndexError
 
-        return self._struct[0]["elements"][index]
+        return self.elements[index]
 
     def ceil_in_node(self, key):
         # returns the index of the smallest node element that has a key > to
@@ -185,3 +185,11 @@ class Node:
             raise IndexError
 
         return self._struct[0]["children"][index]
+
+    def get_index_from_parent(self) -> int:
+        """
+        :return: the index of the parent's children array which points to this node.
+        """
+        key = self.get_element_by_index(0)["key"]  # arbitrary key choice
+        parent = self.parent
+        return parent.find_element_index(key)
