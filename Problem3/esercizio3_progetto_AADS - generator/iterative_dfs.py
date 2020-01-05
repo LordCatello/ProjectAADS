@@ -1,5 +1,5 @@
 """
-Performs a DFS traversal of a graph, in an iterative way.
+Performs a DFS traversal of the connected component of s, in an iterative way.
 
 :param g: the graph to traverse.
 :param s: source node of the DFS traversal.
@@ -37,3 +37,14 @@ def dfs(g, s):
             # so all the nodes which are reachable from the root have
             # have been visited, hence the algorithm can stop
             break
+
+"""
+Performs a DFS traversal of a graph, in an iterative way.
+
+:param g: the graph to traverse.
+"""
+
+def dfs_complete(g):
+    for v in g.vertices():
+        if v.edges_to_visit is None:
+            dfs(g,v)

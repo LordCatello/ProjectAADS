@@ -11,15 +11,13 @@ def main():
     aging_interval_choice_prompt = "Insert the amount of time slices after which a job waiting in the queue will" \
                                    " have its priority updated.\n" + PROMPT_SYMBOL
     aging_interval = choose_positive_integer(aging_interval_choice_prompt)
-    scheduler_choice = choose_scheduler()
 
-    if scheduler_choice == 1:
-        scheduler = LazyJobScheduler(aging_interval)
-    elif scheduler_choice == 2:
-        scheduler = ModuloJobScheduler(aging_interval)
+    scheduler = LazyJobScheduler(aging_interval)
 
     job_in_execution = None
+    time = 0
     while True:
+        print("TIME SLICE: {}".format(time))
         if job_in_execution is not None:
             if job_in_execution.length > 1:
                 job_in_execution.length -= 1
@@ -33,11 +31,12 @@ def main():
 
         if add_job_choice == 'y':
             name, priority, length = ask_job()
-            scheduler.add_job(name, priority, length)  # need to check for bad creation
+            scheduler.add_job(name, priority, length)
 
         if job_in_execution is None:
             job_in_execution = scheduler.get_max_priority_job()
         scheduler.increment_time()
+        time += 1
 
 
 def ask_job() -> (str, int, int):
@@ -128,37 +127,6 @@ def choose_integer(prompt: str, error_string: str, is_valid: Callable[[int], boo
             continue
         if not is_valid(user_input):
             valid_input = False
-
-    return user_input
-
-
-def choose_scheduler() -> int:
-    """Returns 1 if the choice is a LazyJobScheduler, 2 if it is a ModuloJobScheduler.
-    If the user input is not one of 1 or 2, the function loops until it gets valid input."""
-
-    scheduler_choice_prompt = """Do you wish to use a lazy job scheduler (1) or a modulo job scheduler (2)?
-
-        Note: a lazy job scheduler updates priorities only when a new job is requested, whereas a modulo job scheduler
-        does it at every time slice, but only on a subset of the jobs.
-
-        Use a modulo job scheduler if you know that the aging interval of a job is very high compared to the average 
-        length
-        of the jobs, and if you know that the distribution in time of the jobs will be uniform.
-        Otherwise, a lazy job scheduler is usually the better choice.\n\n""" + PROMPT_SYMBOL
-    error_string = "ERROR! Please insert a 1 or a 2.\n"
-
-    user_input = input(scheduler_choice_prompt)
-    try:
-        user_input = int(user_input)
-    except ValueError:
-        print(error_string)
-
-    while user_input not in (1, 2):
-        user_input = input(scheduler_choice_prompt)
-        try:
-            user_input = int(user_input)
-        except ValueError:
-            print(error_string)
 
     return user_input
 
