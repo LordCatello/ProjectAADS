@@ -1,6 +1,6 @@
 import numpy as np
 import platform
-from .node import Node
+from node import Node
 from collections import MutableMapping
 from math import ceil
 from math import floor
@@ -168,6 +168,7 @@ class BTree(MutableMapping):
                 parent.chidren[i] = parent.chidren[i + 1]
 
     def remove_item(self, node, index):
+
         if node.size > self.min_internal_num_children - 1:
             return node.remove_element_by_index(index)
         else:
@@ -426,35 +427,46 @@ class BTree(MutableMapping):
         # increase size
         self._size += 1
 
-    def _insert_existing(self, key, value):
-        inserted = False
+    def _insertion_point(self, key, value):
+        """
+        If the given key is already in the tree, it substitutes its value with the given one. Otherwise,
+        it returns the node in which the (key,value) pair must be inserted.
+
+        :param key: the key to be inserted as new element in the tree.
+        :param value: the value to be associated with the given key.
+        :return: None if the key is already in the tree, or the node in which it must be inserted.
+        """
         start = self._root
         while True:
-            i = start.ceil_in_node(key, start)
+            i = start.ceil_in_node(key)  # get the index of the smallest key in the node > the given one
             elements = start.elements
             children = start.children
-            if i == 0 or elements[i - 1] < key:
+            if i == 0 or elements[i - 1]["key"] < key:
                 if children[i] is None:
-                    break
+                    return start
                 start = children[i]
             else:
-                # previous element in node has same key
+                # i is != 0 and the previous element's key is not smaller than
+                # the given one, but it is neither greater, so we have that
+                # previous element in node has same key as given one
                 elements[i - 1]["value"] = value
-                inserted = True
-                break
+                print("chiave esistente")  # DEBUG
+                return None
 
-        if inserted:
-            return  # consider moving this in the else branch of if statement
-
+    def _insert_existing(self, key, value):
+        inserted = False
+        insert_at = self._insertion_point(key, value)
+        if insert_at is None:
+            return
         # otherwise, in start there's a reference to the node to insert
         # the element into
-        if start.is_full():
+        if insert_at.is_full():
             # call split
-            self._split_and_insert(key, value, start)
+            self._split_and_insert(key, value, insert_at)
         else:
             # note that here I'm sure that the node I'm inserting
             # the pair into has no children
-            start.add_element(key, value)
+            insert_at.add_element(key, value)
             # The size of the node is incremented in Node.add_element
 
         # I have to increase only the size of this tree

@@ -14,7 +14,7 @@ pair_type = np.dtype([("key", tree._key_type), ("value", tree._value_type)])
 element1 = Node(pair_type, tree._order)
 element1.add_element("carmine", 3)
 element1.add_element("pippo", 58)
-element1.add_element("zelda", 3)
+#element1.add_element("zelda", 3)
 
 element2 = Node(pair_type, tree._order)
 element2.add_element("cecilia", 66)
@@ -33,11 +33,16 @@ element4 = Node(pair_type, tree._order)
 element4.add_element("zi", 1)
 element4.add_element("zo", 2)
 element4.add_element("zu", 3)
-#element1._struct[0]["children"][3] = element4
+element1._struct[0]["children"][2] = element4
 element4.parent = element1
 
 tree._root = element1
 tree._size += 4
+#tree.inorder_vist()
+#print(tree._order)
+ret_val = tree._insertion_point('pio', 12)
+for i in ret_val.elements:
+    print(i["key"])
 
 # print(tree.__getitem__("cecilia"))
 # # tree.inorder_visit()
@@ -46,11 +51,13 @@ tree._size += 4
 #     print(el)
 #
 # print(check_tree(tree))
-
+"""
 for node in element2.children:
     print(node)
 
 print(element2.is_leaf())
+"""
+
 
 """
 print(tree.after(element1, 0))
