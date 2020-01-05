@@ -45,20 +45,75 @@ class BTree(MutableMapping):
         if self.is_empty():
             return None
         else:
-            current_node, index = self._get_node_and_index(key)
-            if current_node == None:
+            current_node, index, current_index_from_parent = self._get_node_and_index(key)
+            if current_node is None:
                 return current_node
             else:
-                if self.is_root(current_node) or current_node.size > self.min_internal_num_children - 1:
-                    after_node = current_node.get_child_by_index[index + 1]
+                if self.is_root(current_node) or current_node.size > self._min_internal_num_children - 1:
+                    after_node, after_index, index_from_parent = self.after_node_index(current_node, index)
                     if after_node is None:
                         return current_node.remove_element_by_index(index)
                     else:
-                        pass
+                        to_remove = current_node.get_element_by_index(index)
+                        current_node.elements[index] = after_node.get_element_by_index(0)
+                        after_node.elements[0] = to_remove
+                        return self.remove_item(after_node, 0, index_from_parent)
+                else:
+                    self.remove_item(current_node, index, current_index_from_parent)
 
 
+    def remove_item(self, node, index, index_from_parent):
+        if node.size > self.min_internal_num_children - 1:
+            return node.remove_element_by_index(index)
+        else:
+            parent = node.parent
 
+            if index_from_parent != 0 and parent.chidren[index_from_parent - 1].size > self._min_internal_num_children - 1:
 
+                middle_element_index = index_from_parent - 1
+                left_node = parent.chidren[index_from_parent - 1]
+                max_index = left_node.elements.size - 1
+                return self.transfer_left(parent, middle_element_index, node, index, left_node, max_index)
+
+            elif parent.chidren[index_from_parent + 1].size > self._min_internal_num_children - 1:
+                middle_element_index = index_from_parent
+                right_node = parent.chidren[index_from_parent + 1]
+                min_index = 0
+                return self.transfer_right(parent, middle_element_index, node, index, right_node, min_index)
+
+            else:
+                middle_element_index = index_from_parent - 1
+                left_node = parent.chidren[index_from_parent - 1]
+                pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
+                new_node = Node(pair_type, self.order)
+                for i in range(left_node.size):
+                    new_node.add_element(left_node.get_element_by_index(i))
+                new_node.add_element(parent.get_element_by_index(middle_element_index))
+                for i in range(node.size):
+                    element = node.get_element_by_index(i)
+                    if not(element['key'] == node.get_element_by_index(index)['key']):
+                        new_node.add_element(element)
+                new_node.parent = parent
+                parent.update_children()
+                for i in range(middle_element_index, parent.size):
+                    if i == middle_element_index:
+                        parent.chidren[i] = new_node
+                    else:
+                        parent.chidren[i] = parent.chidren[i+1]
+
+    def transfer_left(self, parent, middle_index, current_node, index_to_remove, left_node, max_index_left):
+        middle_element = parent.elements[middle_index]
+        removed = current_node.remove_element_by_index(index_to_remove)
+        parent.elements[middle_index - 1] = left_node.remove_element_by_index(max_index_left)
+        current_node.add_element(middle_element['key'], middle_element['value'])
+        return removed
+
+    def transfer_right(self, parent, middle_index, current_node, index_to_remove, right_node, min_index_right):
+        middle_element = parent.elements[middle_index]
+        removed = current_node.remove_element_by_index(index_to_remove)
+        parent.elements[middle_index] = right_node.remove_element_by_index(min_index_right)
+        current_node.add_element(middle_element['key'], middle_element['value'])  # Maybe necessary do a add element at last position
+        return removed
 
     def __getitem__(self, key):
         """
@@ -91,6 +146,7 @@ class BTree(MutableMapping):
                  None otherwise.
         '''
         current_node = self._root
+        index_from_parent = None
 
         while current_node is not None:
             index = current_node.find_element_index(key)
@@ -98,14 +154,15 @@ class BTree(MutableMapping):
             if index < current_node.size:
                 element = current_node.get_element_by_index(index)
                 if element["key"] == key:
-                    return current_node, index
+                    return current_node, index, index_from_parent
 
             try:
+                index_from_parent = index
                 current_node = current_node.get_child_by_index(index)
             except IndexError:
                 break
 
-        return None
+        return None, None, None
 
 
     def inorder_vist(self):
@@ -175,26 +232,46 @@ class BTree(MutableMapping):
     def is_empty(self) -> bool:
         return self._size == 0
 
-    def after(self, node, index):
+    def after_node_index(self, node, index):
         current_node = node
         after_node = current_node.get_child_by_index(index + 1)
-        while(after_node is not None):
+        while after_node is not None:
             if after_node.get_child_by_index(0) is None:
-                return after_node.elements[0]
+                num_child = index + 1
+                return after_node, 0, num_child
             else:
                 after_node = after_node.get_child_by_index(0)
-        return None
+                index = -1
+        return None, None, None
+
+    def after(self, node, index):
+        after_node, after_index, num = self.after_node_index(node, index)
+        if after_node is None:
+            return None
+        else:
+            return after_node.elements[after_index]
 
     def before(self, node, index):
+        before_node, before_index, num = self.before_node_index(node, index)
+        if before_node is None:
+            return None
+        else:
+            return before_node.elements[before_index - 1]
+
+    def before_node_index(self, node, index):
         current_node = node
         before_node = current_node.get_child_by_index(index)
-        while (before_node is not None):
+        while before_node is not None:
             last_index = before_node.size
+            num_child = index
             if before_node.get_child_by_index(last_index) is None:
-                return before_node.elements[last_index - 1]
+                return before_node, last_index, num_child
             else:
                 before_node = before_node.get_child_by_index(last_index)
-        return None
+                index = last_index
+
+
+        return None, None, None
 
 
     def _compute_order(self) -> int:
@@ -252,7 +329,7 @@ class BTree(MutableMapping):
                 elements[i - 1]["value"] = value
                 inserted = True
                 break
-            
+
         if inserted:
             return
         # otherwise, in start there's a reference to the node to insert
