@@ -61,7 +61,7 @@ class Node:
 
     def is_leaf(self) -> bool:
         leaf = True
-        for child in self.children():
+        for child in self.children:
             if child is not None:
                 leaf = False
         return leaf
