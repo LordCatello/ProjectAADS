@@ -128,7 +128,7 @@ class BTree(MutableMapping):
         :return:        The value corresponding to the key, if the key is found,
                         None otherwise.
         """
-        node, index = self._get_node_and_index(key)
+        node, index, index_from_parent = self._get_node_and_index(key)
         return node.elements[index]['value']
 
 

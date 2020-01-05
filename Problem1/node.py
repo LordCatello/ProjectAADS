@@ -59,6 +59,16 @@ class Node:
     def is_empty(self) -> bool:
         return self.size == 0
 
+    def is_leaf(self) -> bool:
+        leaf = True
+        for child in self.children:
+            if child is not None:
+                leaf = False
+        return leaf
+
+    def is_root(self) -> bool:
+        return self.parent is None
+
     def remove_element(self, key):
 
         if self.is_empty():
