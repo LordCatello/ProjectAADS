@@ -185,3 +185,22 @@ class Node:
             raise IndexError
 
         return self._struct[0]["children"][index]
+
+    def insert_at_position(self, position: UINT, left_child=None, right_child=None):
+        if (left_child and not right_child) or (right_child and not left_child):
+            raise TypeError("Left and right child must be both specified or both None")
+
+        if not left_child:
+            # then nor right_child is specified
+            if self.num_children() != 0:
+                raise TypeError("Cannot insert an item with no associated children in a non-leaf node")
+            
+
+    def num_children(self):
+        count = 0
+        for child in self.children():
+            if child is not None:
+                count += 1
+        return count
+
+
