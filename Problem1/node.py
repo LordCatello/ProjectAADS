@@ -61,7 +61,7 @@ class Node:
 
     def is_leaf(self) -> bool:
         leaf = True
-        for child in self.children:
+        for child in self.children():
             if child is not None:
                 leaf = False
         return leaf
@@ -186,25 +186,41 @@ class Node:
 
         return self._struct[0]["children"][index]
 
+    def insert_at_position(self, position: UINT, element, left_child=None, right_child=None):
+        """
+        Inserts the given element in the given position, eventually by adding given children.
 
-    def insert_at_position(self, position: UINT, left_child=None, right_child=None):
+        :param position:
+        :param element:
+        :param left_child:
+        :param right_child:
+        :return:
+        """
         if (left_child and not right_child) or (right_child and not left_child):
             raise TypeError("Left and right child must be both specified or both None")
 
         if not left_child:
-            # then nor right_child is specified
-            if self.num_children() != 0:
+            # nor right_child is specified
+            if not self.is_leaf():
                 raise TypeError("Cannot insert an item with no associated children in a non-leaf node")
-            
 
-    def num_children(self):
-        count = 0
-        for child in self.children():
-            if child is not None:
-                count += 1
-        return count
+        if self.is_full():
+            raise Exception("Cannot insert an item in a full node")
 
+        # insert element
+        elements = self.elements
+        for i in range(self.size, position-1, -1):
+            elements[i+1] = elements[i]
+        elements[position] = element
+        self.size += 1
 
+        # if children are specified, insert them too
+        if left_child:
+            children = self.children
+            for i in range(self.size+1, position+1, -1):
+                children[i] = children[i-2]
+            children[position] = left_child
+            children[position+1] = right_child
 
     def get_index_from_parent(self) -> int:
         """
