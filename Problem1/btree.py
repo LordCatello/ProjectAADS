@@ -365,7 +365,7 @@ class BTree(MutableMapping):
             i = start.ceil_in_node(key)  # get the index of the smallest key in the node > the given one
             elements = start.elements
             children = start.children
-            if i == 0 or elements[i - 1] < key:
+            if i == 0 or elements[i - 1]["key"] < key:
                 if children[i] is None:
                     return start
                 start = children[i]
@@ -374,6 +374,7 @@ class BTree(MutableMapping):
                 # the given one, but it is neither greater, so we have that
                 # previous element in node has same key as given one
                 elements[i - 1]["value"] = value
+                print("chiave esistente")  # DEBUG
                 return None
 
     def _insert_existing(self, key, value):
