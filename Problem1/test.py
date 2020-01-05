@@ -47,8 +47,10 @@ tree._size += 4
 #
 # print(check_tree(tree))
 
+"""
 for node in element2.children:
     print(node)
+"""
 
 print(element2.is_leaf())
 

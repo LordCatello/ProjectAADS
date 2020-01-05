@@ -1,6 +1,6 @@
 import numpy as np
 import platform
-from .node import Node
+from node import Node
 from collections import MutableMapping
 from math import ceil
 from math import floor
@@ -180,9 +180,9 @@ class BTree(MutableMapping):
 
     def _get_node_and_index(self, key) -> Tuple[Optional[Node], Optional[int], Optional[int]]:
         """
-        :param key: The key of the element.
-        :return: The node and the index of the array corresponding to the key, if the key is found,
-                 None otherwise.
+        :param key:     The key of the element.
+        :return:        The node and the index of the array corresponding to the key, if the key is found,
+                        None otherwise.
         """
         current_node = self._root
         index_from_parent = None
@@ -358,8 +358,9 @@ class BTree(MutableMapping):
     def _insert_existing(self, key, value):
         inserted = False
         start = self._root
+
         while True:
-            i = start.ceil_in_node(key, start)
+            i = start.ceil_in_node(key)
             elements = start.elements
             children = start.children
             if i == 0 or elements[i - 1] < key:
@@ -375,20 +376,154 @@ class BTree(MutableMapping):
         if inserted:
             return  # consider moving this in the else branch of if statement
 
-        # otherwise, in start there's a reference to the node to insert
-        # the element into
-        if start.is_full():
-            # call split
-            self._split_and_insert(key, value, start)
-        else:
-            # note that here I'm sure that the node I'm inserting
-            # the pair into has no children
-            start.add_element(key, value)
-            # The size of the node is incremented in Node.add_element
+        # otherwise I have to insert the element in a leaf
+        # we use this array because we can't append a new child to the children of a node if is full,
+        # because the array is static
+        children = []
+        # I add another child, because the node will contain another element
+        for i in range(start.size + 2):
+            # the node is a leaf, so the children are all None
+            children.append(None)
 
-        # I have to increase only the size of this tree
+        self._insert_new_element_in_a_node(key, value, start, children)
+
         self._size += 1
 
+
+    def _insert_new_element_in_a_node(self, key, value, node: "Node", children: ["Node"]):
+        """
+        Insert (key, value) in a node.
+        """
+        # if node is None, I have to create a new root
+        if node is None:
+            # creating the new root
+            pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
+            self._root = Node(pair_type, self._order)
+
+            # add the new element
+            self._root.add_element(key, value)
+
+            # update the children
+            self._root.update_child(0, children[0])
+            self._root.update_child(1, children[1])
+        elif node.is_full():
+            _overflow(key, value, node, children)
+        else:
+            node.add_element(key, value)
+
+            # update the children
+            for i in range(len(children)):
+                node.update_child(i, children[i])
+
+
+    def _overflow(self, key, value, node: "Node", children: ["Node"]):
+        """
+        Manages the overflow that happens in a node
+        """
+
+        # if the node is the root, we have to pay attention
+
+        # evaluating the index of the median
+        # floor is equivalent, it will chose a different but valid interval in the case
+        # the array plus the new element is even.
+        median_index = ceil(node.size / 2)
+
+        # evaluating the index where to insert the new element
+        new_element_index = node.find_element_index(key)
+
+        # evaluating the element associated to the median index
+        # we have to pay attention because we have not inserted yet the new element
+        # so we have to use some if to get the correct median
+        if median_index < new_element_index:
+            median_element = node.get_element_by_index(median_index)
+        elif median_index == new_element_index:
+            median_element = (key, value)
+        else:
+            # I consider median_index - 1 because if I add the element in the array I have to shift to the right
+            # all the previous elements
+            # so in the starting array, the element is in the left
+            median_element = node.get_element_by_index(median_index - 1)
+
+
+        # creating two new Nodes
+        pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
+
+        left_node = Node(pair_type, self._order)
+        right_node = Node(pair_type, self._order)
+
+        # insert the elements starting from 0 to median_index - 1 to the left_node and median_index + 1 to size to the right node
+        # the elements array in node is not updated with the insertion of the new element, because we don't have space
+        # se we have to use some if to assign the correct element
+        for i in range(node.size + 1):
+            if i < median_index:
+                if i < new_element_index:
+                    element = node.get_element_by_index(i)
+                    left_node.add_element(element["key"], element["value"])
+                elif i == new_element_index:
+                    left_node.add_element(key, value)
+                else:
+                    element = node.get_element_by_index(i - 1)
+                    left_node.add_element(element["key"], element["value"])
+            elif i > median_index:
+                if i < new_element_index:
+                    element = node.get_element_by_index(i)
+                    right_node.add_element(element["key"], element["value"])
+                elif i == new_element_index:
+                    right_node.add_element(key, value)
+                else:
+                    element = node.get_element_by_index(i - 1)
+                    right_node.add_element(element["key"], element["value"])
+
+
+        # I add the right children to the new nodes using the children array passed as parameter
+        # I have to add children from index 0 to median_index to the left node
+        # and children from index median_index + 1 to old_size to the right node
+        left_counter = 0
+        right_counter = 0
+        for i in range(len(children)):
+            if i <= median_index:
+                left_node.update_child(left_counter, children[i])
+                left_counter += 1
+            else:
+                right_node.update_child(right_counter, children[i])
+                right_counter += 1
+
+        # set the parent of the two nodes
+        parent = node.parent
+
+        # probably this is not useful. This should be already done in the next call of the function.
+        left_node.parent = parent
+        right_node.parent = parent
+
+        # the creation of the two nodes is completed
+        # all the reference to the old node in the children are already been deleted
+        # I do this in the update_child for all the children
+        # the reference in the parent node, will be updated in the next call to the _insert_new_element_in_a_node function
+
+        # Now I have to evaluate the new array of children of the parent
+        new_children = []
+
+        if parent is not None:
+            parent_children = parent.children
+            node_index_in_parent = node.get_index_from_parent()
+            for i in range(parent.size + 1):
+                if i == node_index_in_parent:
+                    new_children.append(left_node)
+                    new_children.append(right_node)
+                else:
+                    new_children.append(parent_children[i])
+        else:
+            # if parent is None
+            # node is the root
+            # so the new children will be only the left and the right child
+            new_children.append(left_node)
+            new_children(right_node)
+
+
+        self._insert_new_element_in_a_node(median_element[0], median_element[1], parent, new_children)
+
+
+    """
     def _split_and_insert(self, key, value, node: Node, left_child: Node, right_child: Node, pos: UINT):
         # Check that both children are specified or none is
         if (not left_child and (right_child or pos)) or (not right_child and (left_child or pos)):
@@ -430,16 +565,6 @@ class BTree(MutableMapping):
                 node._struct[0]["size"] -= 1
             # insert a call to a function that inserts an element and associated left and right child and pos
             # into the tree (pos in index_in_parent)
-
-
-
-
-        """
-        Problemi:
-        - Devo spostare elementi da node a quello nuovo, quindi mi serve un modo per "mettere a null" gli elementi
-        rimossi nel vecchio nodo
-        - devo spostare i child, solo che non c'è la add_child in Node
-        - Devo gestire la propagazione dell'overflow
         """
 
 

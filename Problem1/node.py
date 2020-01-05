@@ -61,7 +61,7 @@ class Node:
 
     def is_leaf(self) -> bool:
         leaf = True
-        for child in self.children():
+        for child in self.children:
             if child is not None:
                 leaf = False
         return leaf
@@ -229,4 +229,8 @@ class Node:
         key = self.get_element_by_index(0)["key"]  # arbitrary key choice
         parent = self.parent
         return parent.find_element_index(key)
+
+    def update_child(self, index: int, node: "Node"):
+        self._struct[0]["children"][index] = node
+        node.parent = self
 
