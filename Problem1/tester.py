@@ -133,5 +133,3 @@ def run_tester():
     # Test is_empty
     result = tree.is_empty()
     assert not result
-
-

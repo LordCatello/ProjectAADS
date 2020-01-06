@@ -669,23 +669,22 @@ class BTree(MutableMapping):
         # se we have to use some if to assign the correct element
         for i in range(node.size + 1):
             if i < median_index:
-                if i < new_element_index:
-                    element = node.get_element_by_index(i)
-                    left_node.add_element(element["key"], element["value"])
-                elif i == new_element_index:
-                    left_node.add_element(key, value)
-                else:
-                    element = node.get_element_by_index(i - 1)
-                    left_node.add_element(element["key"], element["value"])
+                node_to_add = left_node
             elif i > median_index:
-                if i < new_element_index:
-                    element = node.get_element_by_index(i)
-                    right_node.add_element(element["key"], element["value"])
-                elif i == new_element_index:
-                    right_node.add_element(key, value)
-                else:
-                    element = node.get_element_by_index(i - 1)
-                    right_node.add_element(element["key"], element["value"])
+                node_to_add = right_node
+            else:
+                continue
+
+            # we are sure that add is O(1) because we insert at the end of array
+            # so we don't have to search the element and we don't have to shift the elements
+            if i < new_element_index:
+                element = node.get_element_by_index(i)
+                node_to_add.add_element_by_index(node_to_add.size, element["key"], element["value"])
+            elif i == new_element_index:
+                node_to_add.add_element_by_index(node_to_add.size, key, value)
+            else:
+                element = node.get_element_by_index(i - 1)
+                node_to_add.add_element_by_index(node_to_add.size, element["key"], element["value"])
 
 
         # I add the right children to the new nodes using the children array passed as parameter

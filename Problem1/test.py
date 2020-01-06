@@ -4,7 +4,6 @@ from node import Node
 from test_functions import check_tree
 from test_functions import build_tree
 from test_functions import random_int
-from test_functions import test_delete
 import tester
 
 """
@@ -21,20 +20,24 @@ def set_up(dim):
     tree.dump_level()
     return tree
 
+
 def tear_down(tree):
     if check_tree(tree):
         print("The tree is a correct B-Tree.")
     else:
         print("The tree is NOT a correct B-Tree!")
 
+
 def delete_and_print_list(tree, key_list):
     for key in key_list:
         delete_and_print(tree, key)
+
 
 def delete_and_print(tree, key):
     del tree[key]
     print("Deleted {}:".format(key))
     tree.dump_level()
+
 
 def create_tree(dim):
     tree = BTree(int, int)
@@ -47,6 +50,7 @@ def create_tree(dim):
     print(tree.min_internal_num_children)
 
     return tree
+
 
 def delete_transfer_right_case():
     tree = set_up(STANDARD_DIMENSION)
