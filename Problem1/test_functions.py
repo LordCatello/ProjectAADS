@@ -1,6 +1,7 @@
 from btree import BTree
 from node import Node
 from random import randint
+from copy import deepcopy
 
 def build_tree(elements_count: int, key_type, value_type, random_key_function, random_value_function) -> BTree:
     """
@@ -48,6 +49,9 @@ def check_tree(tree: BTree) -> bool:
     :return:        Return true if the tree is a BTree.
                     False otherwise.
     """
+
+    if tree is None:
+        return True
 
     # in-order check
     # and
@@ -184,4 +188,62 @@ def _check_a_b_property(a: int, b: int, node: "Node") -> bool:
             return False
 
     return True
+
+
+def test_delete(tree: BTree, number_of_deletes: int) -> bool:
+    """
+    Tests number_of_deletes "deletes" in the tree.
+    The elements to delete are chosen randomly.
+
+    A check is done after every delete.
+    The check_tree() function is used in order to check if the tree is still a btree.
+    and
+    The __getitem__ function is used in order to check if the element has been effectively removed from the tree.
+
+    If the tree has less elements than number_of_deletes
+    all the elements are deleted.
+
+    :param tree                 Tree.
+    :param number_of_deletes    Number of elements to delete.
+
+    :return:                    True if all the deletes are correct (i.e. all the specified elements have been removed and check_tree() is True)
+                                False otherwise
+    """
+
+    if len(tree) < number_of_deletes:
+        total_elements_to_remove = len(tree)
+    else:
+        total_elements_to_remove = number_of_deletes
+
+    # append all the elements to a temporary list
+    elements = []
+    for element in tree.__iter__():
+        elements.append(element)
+
+    for i in range(total_elements_to_remove):
+        # change a random element from the list
+        index = randint(0, len(elements) - 1)
+        element = deepcopy(elements.pop(index))
+
+        # delete element from tree
+        tree.__delitem__(element["key"])
+
+        # check the tree
+        if not check_tree(tree):
+            return False
+
+        # check if the item has been effectively removed
+        try:
+            tree.__getitem__(element["key"])
+            print("the key is not deleted")
+            # If the key is found, return false
+            return False
+        except:
+            pass
+
+
+    return True
+
+
+
 
