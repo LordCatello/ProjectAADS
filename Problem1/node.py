@@ -100,14 +100,15 @@ class Node:
         :raise IndexError   Raise an exception if the node if full
         """
 
-        if self.is_full():
-            raise IndexError
-
         # Insert an element in an ordered array
         # Search the position where to insert the element
         # index = np.searchsorted(self._struct[0]["elements"], key)
-        # It's better to use a binary search
         index = self.find_element_index(key)
+
+        # If the node is full and I don't have to update an element
+        # I have to raise an exception
+        if index >= len(self._struct[0]["elements"]):
+            raise IndexError
 
         # If the key is not present, I have to shift all the elements
         if self._struct[0]["elements"][index]["key"] != key:
@@ -160,15 +161,18 @@ class Node:
 
         return self.elements[index]
 
+    """
     def ceil_in_node(self, key):
         # returns the index of the smallest node element that has a key > to
         # the given one, or node.size if all the elements in the node have key
         # <= to the given key
         elements = self.elements
+        i = 0
         for i in range(self.size):
             if elements[i]["key"] > key:
                 return i
-        return i+1
+        return i + 1
+    """
 
     def get_child_by_index(self, index: int) -> "Node":
         """

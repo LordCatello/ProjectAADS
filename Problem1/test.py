@@ -78,10 +78,10 @@ print(tree.before(element3, 1))
 
 # use this function to build a tree
 
-tree = build_tree(30, int, int, random_int, random_int)
+tree = build_tree(1000, int, int, random_int, random_int)
 tree.inorder_vist()
 print(tree.__len__())
-tree.graphic_dump()
+# tree.graphic_dump()
 print(tree.order)
 print(check_tree(tree))
 
