@@ -13,7 +13,7 @@ Test file
 
 STANDARD_DIMENSION = 21
 
-
+"""
 def set_up(dim):
     tree = create_tree(dim)
     print("start tree:")
@@ -82,13 +82,14 @@ def delete_fusion_new_root():
     delete_and_print_list(tree, [1, 3])
     tear_down(tree)
 
-"""
+
 delete_fusion_new_root()
 delete_fusion_right_case()
 delete_transfer_right_case()
 delete_fusion_left_case()
 delete_transfer_left_case()
 """
+
 
 tree = BTree(int, int)
 

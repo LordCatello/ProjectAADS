@@ -54,6 +54,11 @@ class BTree(MutableMapping):
         return self._root
 
     def __delitem__(self, key):
+        """
+        deletes the item with that key
+        :param key:
+        :return:
+        """
         if self.is_empty():
             raise KeyError
         else:
@@ -61,6 +66,7 @@ class BTree(MutableMapping):
 
             if current_node is None:
                 raise KeyError
+
             elif self.is_root(current_node):
                 self._size = self._size - 1
                 if current_node.is_leaf():
@@ -80,6 +86,13 @@ class BTree(MutableMapping):
                     return self.remove_item(after_node,after_index, successor_index_from_parent)
 
     def _swap_with_successor(self,current_node,index):
+        """
+        swap the element current_node[index] with its successor
+
+        :param current_node: the current node that contains the element to be swapped
+        :param index: the index of the element that have to be swapped
+        :return:
+        """
         after_node, after_index, successor_index_from_parent = self.after_node_index(current_node, index)
         to_remove = current_node.get_element_by_index(index)
         current_node.elements[index] = after_node.get_element_by_index(after_index)
@@ -91,10 +104,6 @@ class BTree(MutableMapping):
         Deletes the element if it's not a naive case.
         It firstly tries to make a transfer, otherwise it makes a fusion of nodes.
         In this case, it then restores the tree after an underflow by going upwards.
-        """
-        """
-        if node.size >= self._min_internal_num_children - 1:  # tree restored
-            return
         """
         # can a transfer be executed?
         parent = node.parent
@@ -128,49 +137,92 @@ class BTree(MutableMapping):
 
         # no! a fusion is necessary
         if left_sibling is not None:
-            removed = node.get_element_by_index(index_to_delete)
             self.fusion_left(parent, index_from_parent - 1, node, index_to_delete, left_sibling)
             self.remove_item(parent, index_from_parent - 1, parent.get_index_from_parent())
-            return removed
         elif right_sibling is not None:
-            removed = node.get_element_by_index(index_to_delete)
             self.fusion_right(parent, index_from_parent, node, index_to_delete, right_sibling)
             self.remove_item(parent,index_from_parent, parent.get_index_from_parent())
-            return removed
 
     def fusion_left(self,parent, middle_index, current_node, index_to_remove, left_node):
+        """
+        performs a fusion with the left sibiling of the current_node
+
+        :param parent: parent of the current node
+        :param middle_index: index of the parent in which there is the element to take
+        :param current_node: current node that is in underflow
+        :param index_to_remove: index of the element to remove
+        :param left_node: the left sibling that has to be merged with the current node
+        :return:
+        """
         print("Fusion left")
         pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
         new_node = Node(pair_type, self.order)
+        counter = 0
         for i in range(left_node.size):
             new_node.add_element(left_node.get_element_by_index(i)["key"],left_node.get_element_by_index(i)["value"])
+            new_node.children[counter] = left_node.children[i]
+            counter += 1
+        #new_node.children[counter] = left_node.children[left_node.size+1]
+        #counter += 1
+
         new_node.add_element(parent.get_element_by_index(middle_index)["key"],parent.get_element_by_index(middle_index)["value"])
+
         for i in range(current_node.size):
             element = current_node.get_element_by_index(i)
             if not (element['key'] == current_node.get_element_by_index(index_to_remove)['key']):
                 new_node.add_element(element["key"],element["value"])
+                new_node.children[counter]=current_node.children[i]
+                counter += 1
+
+        # new_node.children[counter] = current_node.children[current_node.size + 1]
+
+        new_node.parent = parent
+        parent.children[middle_index] = new_node
+        for i in range(middle_index + 1, parent.size):
+            parent.children[i] = parent.children[i + 1]
+
+        parent.children[parent.size] = None
+
+    def fusion_right(self,parent, middle_index, current_node, index_to_remove, right_node):
+        """
+        performs a fusion with the right sibiling of the current_node
+
+        :param parent: parent of the current node
+        :param middle_index: index of the parent in which there is the element to take
+        :param current_node: current node that is in underflow
+        :param index_to_remove: index of the element to remove
+        :param right_node: the right sibling that has to be merged with the current node
+        :return:
+        """
+        print("Fusion right")
+        pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
+        new_node = Node(pair_type, self.order)
+        counter = 0
+
+        for i in range(current_node.size):
+            element = current_node.get_element_by_index(i)
+            if not (element['key'] == current_node.get_element_by_index(index_to_remove)['key']):
+                new_node.add_element(element["key"],element["value"])
+                new_node.children[counter] = current_node.children[i]
+                counter += 1
+
+        #new_node.children[counter] = current_node.children[current_node.size + 1]
+        #counter += 1
+        new_node.add_element(parent.get_element_by_index(middle_index)["key"],parent.get_element_by_index(middle_index)["value"])
+
+        for i in range(right_node.size):
+            new_node.add_element(right_node.get_element_by_index(i)["key"],right_node.get_element_by_index(i)["value"])
+            new_node.children[counter]=right_node.children[i]
+            counter +=1
+
+        new_node.children[i] =right_node.children[right_node.size +1]
+
         new_node.parent = parent
         parent.children[middle_index] = new_node
         for i in range(middle_index + 1, parent.size):
             parent.children[i] = parent.children[i + 1]
         parent.children[parent.size] = None
 
-    def fusion_right(self,parent, middle_index, current_node, index_to_remove, right_node):
-        print("Fusion right")
-        pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
-        new_node = Node(pair_type, self.order)
-        for i in range(current_node.size):
-            element = current_node.get_element_by_index(i)
-            if not (element['key'] == current_node.get_element_by_index(index_to_remove)['key']):
-                new_node.add_element(element["key"],element["value"])
-        new_node.add_element(parent.get_element_by_index(middle_index)["key"],parent.get_element_by_index(middle_index)["value"])
-        for i in range(right_node.size):
-            new_node.add_element(right_node.get_element_by_index(i)["key"],right_node.get_element_by_index(i)["value"])
-        new_node.parent = parent
-        parent.children[middle_index] = new_node
-        for i in range(middle_index + 1, parent.size):
-            parent.children[i] = parent.children[i + 1]
-        parent.children[parent.size] = None
 
     def remove_item(self, node, index, index_from_parent):
         if node.size > self.min_internal_num_children - 1:
@@ -178,17 +230,44 @@ class BTree(MutableMapping):
         else:
             return self._delete_underflow(node,index, index_from_parent)
 
+
     def transfer_left(self, parent, middle_index, current_node, index_to_remove, left_node):
+        """
+        performs a transfer to the left
+        :param parent: parent of the node that is in underflow
+        :param middle_index: the index of the element of the father that mast be swapped
+        :param current_node: the current node that is in underflow
+        :param index_to_remove: the index of the element to remove
+        :param left_node: the left sibling of the node of that is in underflow
+        :return:
+        """
         middle_element = parent.get_element_by_index(middle_index)
         max_left_element = left_node.remove_element_by_index(left_node.size - 1)
+
+        max_left_children = left_node.children[left_node.size + 1]
         parent.elements[middle_index]=max_left_element
+        current_node.children[index_to_remove - 1] = max_left_children
+
         removed = current_node.remove_element_by_index(index_to_remove)
         current_node.add_element(middle_element["key"], middle_element["value"])
         return removed
 
     def transfer_right(self, parent, middle_index, current_node, index_to_remove, right_node):
+        """
+           performs a transfer to the right
+           :param parent: parent of the node that is in underflow
+           :param middle_index: the index of the element of the father that mast be swapped
+           :param current_node: the current node that is in underflow
+           :param index_to_remove: the index of the element to remove
+           :param right_node: the right sibling of the node of that is in underflow
+           :return:
+           """
         middle_element = parent.get_element_by_index(middle_index)
+
         min_right_element = right_node.remove_element_by_index(0)
+        min_right_children = right_node.children[0]
+
+        current_node.children[index_to_remove+1] = min_right_children
         parent.elements[middle_index] = min_right_element
         removed = current_node.remove_element_by_index(index_to_remove)
         current_node.add_element(middle_element["key"],middle_element["value"])
