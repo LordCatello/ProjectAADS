@@ -233,6 +233,8 @@ class BTree(MutableMapping):
         return self._size
 
     def is_root(self, node: Node) -> bool:
+        if node is None:
+            return False
         return node == self._root and node.is_root()
 
     def _get_node_and_index(self, key) -> Tuple[Optional[Node], Optional[int], Optional[int]]:
@@ -327,7 +329,7 @@ class BTree(MutableMapping):
          For each node, the size of the node and the array of elements are printed.
         """
 
-        if self._root is None:
+        if self.is_empty():
             return
 
         queue = Queue()
