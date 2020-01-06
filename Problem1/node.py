@@ -85,7 +85,7 @@ class Node:
     def remove_element_by_index(self, index):
 
         removed = copy.deepcopy(self.elements[index])
-        for i in range(index, self.size):
+        for i in range(index, self.size - 1):
             self.elements[i] = self.elements[i + 1]
 
         self.size = self.size - 1
