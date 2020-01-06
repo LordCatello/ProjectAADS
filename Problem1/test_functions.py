@@ -58,7 +58,7 @@ def check_tree(tree: BTree) -> bool:
     # check if the keys are unique
     test_size = 0
     prec = None
-    for el in tree.__iter__():
+    for el in tree:
         if prec is not None:
             # the in-order visit is not correct if
             if prec > el["key"]:
@@ -219,10 +219,16 @@ def test_delete(tree: BTree, number_of_deletes: int, debug: bool) -> bool:
 
     # append all the elements to a temporary list
     elements = []
-    for element in tree.__iter__():
-        elements.append(element)
+    for element in tree:
+        elements.append(deepcopy(element))
+
+    if debug:
+        print("Starting list: ", elements)
 
     for i in range(total_elements_to_remove):
+        if debug:
+            print("Iteration: {}\nList: {}".format(i, elements))
+
         # change a random element from the list
         index = randint(0, len(elements) - 1)
         element = deepcopy(elements.pop(index))
@@ -230,7 +236,7 @@ def test_delete(tree: BTree, number_of_deletes: int, debug: bool) -> bool:
         # delete element from tree
         if debug:
             print("Deleting item with key: ", element["key"])
-        tree.__delitem__(element["key"])
+        del tree[element["key"]]
 
         # check if the item has been effectively removed
         try:
