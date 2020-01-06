@@ -58,7 +58,7 @@ def check_tree(tree: BTree) -> bool:
     # check if the keys are unique
     test_size = 0
     prec = None
-    for el in tree.__iter__():
+    for el in tree:
         if prec is not None:
             # the in-order visit is not correct if
             if prec > el["key"]:
@@ -104,6 +104,9 @@ def _check_depth(tree: BTree) -> bool:
     :return         True if the depth property is correct.
                     False otherwise.
     """
+
+    # this is partially correct.
+    # we have to modify it
 
     node = tree.root
 
@@ -190,7 +193,7 @@ def _check_a_b_property(a: int, b: int, node: "Node") -> bool:
     return True
 
 
-def test_delete(tree: BTree, number_of_deletes: int) -> bool:
+def test_delete(tree: BTree, number_of_deletes: int, debug: bool) -> bool:
     """
     Tests number_of_deletes "deletes" in the tree.
     The elements to delete are chosen randomly.
@@ -205,6 +208,8 @@ def test_delete(tree: BTree, number_of_deletes: int) -> bool:
 
     :param tree                 Tree.
     :param number_of_deletes    Number of elements to delete.
+    :param debug                If debug is True, some debug prints are made
+                                Otherwise only the failure cause will be printed.
 
     :return:                    True if all the deletes are correct (i.e. all the specified elements have been removed and check_tree() is True)
                                 False otherwise
@@ -217,30 +222,40 @@ def test_delete(tree: BTree, number_of_deletes: int) -> bool:
 
     # append all the elements to a temporary list
     elements = []
-    for element in tree.__iter__():
-        elements.append(element)
+    for element in tree:
+        elements.append(deepcopy(element))
 
     for i in range(total_elements_to_remove):
+        if debug:
+            print("Iteration number i: ", i)
+            tree.dump_level()
+
         # change a random element from the list
         index = randint(0, len(elements) - 1)
         element = deepcopy(elements.pop(index))
 
         # delete element from tree
-        tree.__delitem__(element["key"])
+        if debug:
+            print("Deleting item with key: ", element["key"])
 
-        # check the tree
-        if not check_tree(tree):
-            return False
+        del tree[element["key"]]
 
         # check if the item has been effectively removed
         try:
             tree.__getitem__(element["key"])
-            print("the key is not deleted")
+            print("the item associated to key: ", element["key"], " has not been deleted")
             # If the key is found, return false
+            if debug:
+                tree.dump_level()
             return False
         except:
             pass
 
+        # check the tree
+        if not check_tree(tree):
+            if debug:
+                tree.dump_level()
+            return False
 
     return True
 
