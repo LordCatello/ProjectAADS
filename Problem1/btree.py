@@ -5,7 +5,9 @@ from collections import MutableMapping
 from math import ceil
 from math import floor
 from typing import Tuple, Optional
-BLOCK_DIM = 256
+from queue import Queue
+
+BLOCK_DIM = 0
 UINT = np.uint32
 POINTER_DIM = int(platform.architecture()[0][:2]) // 8
 
@@ -28,7 +30,13 @@ class BTree(MutableMapping):
         self._key_type = key_type
         self._value_type = value_type
         self._order = self._compute_order()
+
+        # The order should be at least 4
+        if self._order < 4:
+            self._order = 4
+
         self._min_internal_num_children = int(ceil((self._order - 1) / 2))
+
 
     @property
     def order(self) -> int:
@@ -305,6 +313,44 @@ class BTree(MutableMapping):
             node.print_node()
             for child in node.children:
                 self._dump(child)
+
+    def dump_level(self):
+        """
+         Dumps the tree.
+
+         Dumps the tree in the standard output.
+
+         A new level is placed on a new line.
+
+         The collection of children of two different nodes in the same line are divided by more space
+         respects to the space used for the children of the same node.
+
+         For each node, the size of the node and the array of elements are printed.
+        """
+
+        queue = Queue()
+        queue.put(self._root)
+
+        while not queue.empty():
+            print()
+            count = queue.qsize()
+
+            for i in range(0, count):
+                queue_element = queue.get()
+                if queue_element == "tab":
+                    print(end="\t")
+                else:
+                    # print size
+                    print("size:", queue_element.size, end=" - ")
+
+                    elements = queue_element.elements
+                    for j in range(queue_element.size):
+                        print(elements[j], end=" ")
+
+                    for child in queue_element.children:
+                        if child is not None:
+                            queue.put(child)
+                    queue.put("tab")
 
     def _iter_inorder(self, node):
         if node is None:

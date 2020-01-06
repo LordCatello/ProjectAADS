@@ -78,28 +78,24 @@ print(tree.before(element3, 1))
 
 # use this function to build a tree
 
-
-tree = build_tree(1000, int, int, random_int, random_int)
+"""
+tree = build_tree(10, int, int, random_int, random_int)
 
 print(tree.order)
+tree.inorder_vist()
 print(check_tree(tree))
-
-
 """
+
 tree = BTree(int, int)
 
-
-for i in range(50):
+for i in range(20):
     tree[i] = i + 1
-
-
 
 tree.inorder_vist()
 print(len(tree))
 print(check_tree(tree))
+tree.dump_level()
 
-
-"""
 
 """
 tree = BTree(int,int)
