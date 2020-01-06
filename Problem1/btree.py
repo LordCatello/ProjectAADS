@@ -288,8 +288,12 @@ class BTree(MutableMapping):
         :raise:         KeyError if the value is not found.
         """
 
-        if tree.root is None:
+        if key is None:
+            raise TypeError("Key can't be none")
+
+        if self.root is None:
           raise KeyError
+
 
         node, index, _ = self._get_node_and_index(key)
         if node is None or index is None:
