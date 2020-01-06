@@ -101,6 +101,10 @@ print(check_tree(tree))
 
 tree.graphic_dump()
 
+del(tree[1])
+del(tree[12])
+del(tree[23])
+del(tree[13])
 
 
 

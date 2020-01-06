@@ -1,5 +1,6 @@
 import numpy as np
 import copy
+from typing import Optional
 
 UINT = np.uint32
 
@@ -227,9 +228,10 @@ class Node:
             children[position] = left_child
             children[position+1] = right_child
 
-    def get_index_from_parent(self) -> int:
+    def get_index_from_parent(self) -> Optional[int]:
         """
-        :return: the index of the parent's children array which points to this node.
+        :return: the index of the parent's children array which points to this node or None if it has no
+                 parent - i.e. it is the root.
         """
         key = self.get_element_by_index(0)["key"]  # arbitrary key choice
         parent = self.parent

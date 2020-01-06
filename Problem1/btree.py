@@ -67,27 +67,7 @@ class BTree(MutableMapping):
                 else:
                     after_node,after_index=self._swap_with_successor(current_node,index)
                     return self.remove_item(after_node,after_index)
-                """
-                if self.is_root(current_node) or current_node.size > self._min_internal_num_children - 1:
-                    # I am the root or an internal node that will not be affected by underflow
-                    # after_index should be always 0
-                    if current_node.is_leaf():
-                        return current_node.remove_element_by_index(index)
-                    else:
-                        # I am not a leaf, so i swap the element to be deleted with its successor and
-                        # delete it
-                        after_node,after_index = self._swap_with_successor(current_node,index)
-                        return self.remove_item(after_node, after_index)
-                else:
-                    if current_node.is_leaf():
-                        # I am a leaf and i cant delete the element safely
-                        return self._delete_underflow(current_node,index)
-                    else:
-                        # i am not the root and i cant delete the element safely, but i still need to swap
-                        # the element with is successor
-                        after_node, after_index = self._swap_with_successor(current_node, index)
-                        return self.remove_item(after_node, after_index)
-                """
+
 
     def _swap_with_successor(self,current_node,index):
         after_node, after_index, index_from_parent = self.after_node_index(current_node, index)
@@ -119,15 +99,17 @@ class BTree(MutableMapping):
             right_sibling = parent.children[index_from_parent + 1]
 
         if left_sibling is not None and left_sibling.size >= self._min_internal_num_children:
+            print("Transfer left")
             return self.transfer_left(parent, index_from_parent - 1, node, index_to_delete, left_sibling)
 
         if right_sibling is not None and right_sibling.size >= self._min_internal_num_children:
+            print("Transfer left")
             return self.transfer_right(parent, index_from_parent, node, index_to_delete, right_sibling)
 
         # no! a fusion is necessary
         if left_sibling is not None:
             removed = node.get_element_by_index(index_to_delete)
-            self.fusion_left(parent, index_from_parent, node, index_to_delete, left_sibling)
+            self.fusion_left(parent, index_from_parent - 1, node, index_to_delete, left_sibling)
             self.remove_item(parent,index_from_parent)
             return removed
         elif right_sibling is not None:
@@ -139,44 +121,43 @@ class BTree(MutableMapping):
 
 
     def fusion_left(self,parent, middle_index, current_node, index_to_remove, left_node):
+        print("Fusion left")
         pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
         new_node = Node(pair_type, self.order)
         for i in range(left_node.size):
-            new_node.add_element(left_node.get_element_by_index(i))
-        new_node.add_element(parent.get_element_by_index(middle_index))
+            new_node.add_element(left_node.get_element_by_index(i)["key"],left_node.get_element_by_index(i)["value"])
+        new_node.add_element(parent.get_element_by_index(middle_index)["key"],parent.get_element_by_index(middle_index)["value"])
         for i in range(current_node.size):
             element = current_node.get_element_by_index(i)
             if not (element['key'] == current_node.get_element_by_index(index_to_remove)['key']):
-                new_node.add_element(element)
+                new_node.add_element(element["key"],element["value"])
         new_node.parent = parent
         # parent.update_children()
-        for i in range(middle_index, parent.size):
-            if i == middle_index:
-                parent.chidren[i] = new_node
-            else:
-                parent.chidren[i] = parent.chidren[i + 1]
+        parent.children[middle_index] = new_node
+        for i in range(middle_index + 1, parent.size):
+            parent.children[i] = parent.children[i + 1]
 
 
     def fusion_right(self,parent, middle_index, current_node, index_to_remove, right_node):
+        print("Fusion right")
         pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
         new_node = Node(pair_type, self.order)
         for i in range(current_node.size):
             element = current_node.get_element_by_index(i)
             if not (element['key'] == current_node.get_element_by_index(index_to_remove)['key']):
-                new_node.add_element(element)
-        new_node.add_element(parent.get_element_by_index(middle_index))
+                new_node.add_element(element["key"],element["value"])
+        new_node.add_element(parent.get_element_by_index(middle_index)["key"],parent.get_element_by_index(middle_index)["value"])
         for i in range(right_node.size):
-            new_node.add_element(right_node.get_element_by_index(i))
+            new_node.add_element(right_node.get_element_by_index(i)["key"],right_node.get_element_by_index(i)["value"])
         new_node.parent = parent
         # parent.update_children()
         for i in range(middle_index, parent.size):
             if i == middle_index:
-                parent.chidren[i] = new_node
+                parent.children[i] = new_node
             else:
-                parent.chidren[i] = parent.chidren[i + 1]
+                parent.children[i] = parent.children[i + 1]
 
     def remove_item(self, node, index):
-
         if node.size > self.min_internal_num_children - 1:
             return node.remove_element_by_index(index)
         else:
