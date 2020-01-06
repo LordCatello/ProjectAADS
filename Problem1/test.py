@@ -9,7 +9,6 @@ from test_functions import random_int
 Test file
 
 """
-
 tree = BTree(int, int)
 
 for i in range(21):
@@ -20,10 +19,8 @@ print(tree.order)
 print(tree.min_internal_num_children)
 tree.dump_level()
 
-del tree[0]
-del tree[11]
 del tree[12]
-
+del tree[13]
 
 tree.dump_level()
 

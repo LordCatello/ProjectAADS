@@ -9,7 +9,7 @@ from typing import Tuple, Optional
 from queue import Queue
 
 
-BLOCK_DIM = 256
+BLOCK_DIM = 0
 
 UINT = np.uint32
 POINTER_DIM = int(platform.architecture()[0][:2]) // 8
