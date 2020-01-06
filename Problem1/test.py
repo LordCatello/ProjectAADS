@@ -90,6 +90,7 @@ print(check_tree(tree))
 """
 
 # TEST TRANSFER RIGHT
+"""
 tree = BTree(int, int)
 pair_type = np.dtype([("key", tree._key_type), ("value", tree._value_type)])
 print("a = ", tree._min_internal_num_children)
@@ -140,20 +141,23 @@ print(check_tree(tree))
 
 #del tree[16]
 
+tree.dump_level()
+print(check_tree(tree))
 """
+
+
 
 tree = BTree(int, int)
 
 for i in range(20):
     tree[i] = i + 1
 
-tree.inorder_vist()
-print(len(tree))
+# tree.inorder_vist()
 print(check_tree(tree))
 tree.dump_level()
 
 
-"""
+
 """
 tree = BTree(int,int)
 
