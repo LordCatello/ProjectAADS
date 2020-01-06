@@ -227,7 +227,10 @@ class Node:
         """
         key = self.get_element_by_index(0)["key"]  # arbitrary key choice
         parent = self.parent
-        return parent.find_element_index(key)
+        if parent is not None:
+            return parent.find_element_index(key)
+        else:
+            return None
 
     def update_child(self, index: int, node: "Node"):
         self._struct[0]["children"][index] = node
@@ -235,3 +238,7 @@ class Node:
         if node is not None:
             node.parent = self
 
+    def print_node(self):
+        for i in self.elements:
+            print(i,end='')
+        print()

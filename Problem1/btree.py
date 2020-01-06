@@ -50,7 +50,15 @@ class BTree(MutableMapping):
 
             if current_node is None:
                 return current_node
+            elif self.is_root(current_node):
+                self._size-=1
+                if current_node.is_leaf():
+                    current_node.remove_element_by_index(index)
+                else:
+                    after_node, after_index = self._swap_with_successor(current_node, index)
+                    return self.remove_item(after_node, after_index)
             else:
+                self._size -= 1
                 if current_node.is_leaf():
                     if current_node.size > self.min_internal_num_children - 1:
                         return current_node.remove_element_by_index(index)
@@ -316,6 +324,18 @@ class BTree(MutableMapping):
 
         return self._iter_inorder(self._root)
 
+
+    def graphic_dump(self):
+        self._dump(self.root)
+
+
+    def _dump(self,node):
+        if node is not None:
+            print("I am  node")
+            node.print_node()
+            for child in node.children:
+                self._dump(child)
+
     def _iter_inorder(self, node):
         if node is None:
             return
@@ -329,7 +349,6 @@ class BTree(MutableMapping):
         for i in range(node.size):
             yield from self._iter_inorder(children[i])
             yield elements[i]
-
         yield from self._iter_inorder(children[node.size])
 
     def __setitem__(self, k, v) -> None:
