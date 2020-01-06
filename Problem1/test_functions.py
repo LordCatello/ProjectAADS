@@ -49,14 +49,21 @@ def check_tree(tree: BTree) -> bool:
     is_btree = True
 
     # in-order check
+    test_size = 0
     prec = None
     for el in tree.__iter__():
         if prec is not None:
-            # the in-order visit is not correct
+            # the in-order visit is not correct if
             if prec > el["key"]:
                 return False
 
         prec = el["key"]
+
+        test_size += 1
+
+    # check the size
+    if len(tree) != test_size:
+        return False
 
     # children check
     b = tree.order
