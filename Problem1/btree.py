@@ -7,7 +7,7 @@ from math import floor
 from typing import Tuple, Optional
 from queue import Queue
 
-BLOCK_DIM = 0
+BLOCK_DIM = 256
 UINT = np.uint32
 POINTER_DIM = int(platform.architecture()[0][:2]) // 8
 
@@ -95,9 +95,21 @@ class BTree(MutableMapping):
         if node.size >= self._min_internal_num_children - 1:  # tree restored
             return
         """
+
         # can a transfer be executed?
         parent = node.parent
         index_from_parent = node.get_index_from_parent()
+
+        """
+        if index_from_parent is None:
+            # node is the root
+            if node.size > 1:
+                node.remove_element_by_index(index_to_delete)
+                return
+            else:
+                self._root=node.children[0]
+                return
+        """
 
         right_sibling, left_sibling = None, None
 
@@ -111,19 +123,20 @@ class BTree(MutableMapping):
             return self.transfer_left(parent, index_from_parent - 1, node, index_to_delete, left_sibling)
 
         if right_sibling is not None and right_sibling.size >= self._min_internal_num_children:
-            print("Transfer left")
+            print("Transfer l")
             return self.transfer_right(parent, index_from_parent, node, index_to_delete, right_sibling)
 
         # no! a fusion is necessary
         if left_sibling is not None:
             removed = node.get_element_by_index(index_to_delete)
             self.fusion_left(parent, index_from_parent - 1, node, index_to_delete, left_sibling)
-            self.remove_item(parent,index_from_parent)
+            self.__delitem__(parent.get_element_by_index(index_from_parent)["key"])
             return removed
         elif right_sibling is not None:
             removed = node.get_element_by_index(index_to_delete)
             self.fusion_right(parent, index_from_parent, node, index_to_delete, right_sibling)
-            self.remove_item(parent, index_from_parent)
+            print(parent.get_element_by_index(index_from_parent)["key"])
+            self.remove_item(parent,index_from_parent)
             return removed
 
 

@@ -88,14 +88,19 @@ print(check_tree(tree))
 
 tree = BTree(int, int)
 
-for i in range(20):
-    tree[i] = i + 1
+for i in range(50):
+    tree[i]=i+1
 
-tree.inorder_vist()
 print(len(tree))
 print(check_tree(tree))
+print(tree.min_internal_num_children)
 tree.dump_level()
+del(tree[0])
+del(tree[11])
+del(tree[1])
 
+
+tree.dump_level()
 
 """
 tree = BTree(int,int)
