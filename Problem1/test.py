@@ -4,7 +4,6 @@ from node import Node
 from test_functions import check_tree
 from test_functions import build_tree
 from test_functions import random_int
-from test_functions import test_delete
 import tester
 
 """
