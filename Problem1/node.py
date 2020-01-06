@@ -1,4 +1,5 @@
 import numpy as np
+import copy
 
 UINT = np.uint32
 
@@ -82,9 +83,10 @@ class Node:
 
     def remove_element_by_index(self, index):
 
-        removed = self.elements[index]
+        removed = copy.deepcopy(self.elements[index])
         for i in range(index, self.size):
-            self.elements[index] = self.elements[index + 1]
+            self.elements[i] = self.elements[i + 1]
+
         self.size = self.size - 1
         return removed
 
@@ -150,7 +152,7 @@ class Node:
 
     def get_element_by_index(self, index: int):
         """
-        Returns an element given the index.
+        Returns an element given the index as a deep copy.
 
         :param index:       The index of the element
 
@@ -160,7 +162,7 @@ class Node:
         if index >= self.size or index < 0:
             raise IndexError
 
-        return self.elements[index]
+        return copy.deepcopy(self.elements[index])
 
     """
     def ceil_in_node(self, key):

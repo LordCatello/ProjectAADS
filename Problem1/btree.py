@@ -113,13 +113,13 @@ class BTree(MutableMapping):
 
         right_sibling, left_sibling = None, None
 
-        if index_from_parent - 1 > 0:
+        if index_from_parent - 1 >= 0:
             left_sibling = parent.children[index_from_parent - 1]
         if index_from_parent + 1 < parent.size:
             right_sibling = parent.children[index_from_parent + 1]
 
         if left_sibling is not None and left_sibling.size >= self._min_internal_num_children:
-            return self.transfer_left(parent, index_from_parent, node, index_to_delete, left_sibling)
+            return self.transfer_left(parent, index_from_parent - 1, node, index_to_delete, left_sibling)
 
         if right_sibling is not None and right_sibling.size >= self._min_internal_num_children:
             return self.transfer_right(parent, index_from_parent, node, index_to_delete, right_sibling)
@@ -181,43 +181,10 @@ class BTree(MutableMapping):
             return node.remove_element_by_index(index)
         else:
             return self._delete_underflow(node,index)
-            """
-            parent = node.parent
-            index_from_parent = node.get_index_from_parent()
 
-            if index_from_parent != 0 and parent.chidren[index_from_parent - 1].size > self._min_internal_num_children - 1:
-
-                middle_element_index = index_from_parent - 1
-                left_node = parent.chidren[index_from_parent - 1]
-                return self.transfer_left(parent, middle_element_index, node, index, left_node)
-
-            elif parent.chidren[index_from_parent + 1].size > self._min_internal_num_children - 1:
-                middle_element_index = index_from_parent
-                right_node = parent.chidren[index_from_parent + 1]
-                return self.transfer_right(parent, middle_element_index, node, index, right_node)
-
-            else:
-                middle_element_index = index_from_parent - 1
-                left_node = parent.chidren[index_from_parent - 1]
-                pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
-                new_node = Node(pair_type, self.order)
-                for i in range(left_node.size):
-                    new_node.add_element(left_node.get_element_by_index(i))
-                new_node.add_element(parent.get_element_by_index(middle_element_index))
-                for i in range(node.size):
-                    element = node.get_element_by_index(i)
-                    if not(element['key'] == node.get_element_by_index(index)['key']):
-                        new_node.add_element(element)
-                new_node.parent = parent
-                # parent.update_children()
-                for i in range(middle_element_index, parent.size):
-                    if i == middle_element_index:
-                        parent.chidren[i] = new_node
-                    else:
-                        parent.chidren[i] = parent.chidren[i+1]
-                """
     def transfer_left(self, parent, middle_index, current_node, index_to_remove, left_node):
-        middle_element = parent.elements[middle_index]
+        middle_element = parent.get_element_by_index(middle_index)
+        print(middle_element)
         max_left_element = left_node.remove_element_by_index(left_node.size - 1)
         parent.elements[middle_index]=max_left_element
         removed = current_node.remove_element_by_index(index_to_remove)
@@ -225,10 +192,10 @@ class BTree(MutableMapping):
         return removed
 
     def transfer_right(self, parent, middle_index, current_node, index_to_remove, right_node):
-        middle_element = parent.elements[middle_index]
+        middle_element = parent.get_element_by_index(middle_index)
         min_right_element = right_node.remove_element_by_index(0)
         parent.elements[middle_index] = min_right_element
-        removed = current_node.get_element_by_index(index_to_remove)
+        removed = current_node.remove_element_by_index(index_to_remove)
         current_node.add_element(middle_element["key"],middle_element["value"])
 
         return removed
