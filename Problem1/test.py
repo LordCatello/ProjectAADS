@@ -76,6 +76,7 @@ print(tree.before(element1, 1))
 print(tree.before(element3, 1))
 """
 
+"""
 # use this function to build a tree
 
 
@@ -83,7 +84,54 @@ tree = build_tree(1000, int, int, random_int, random_int)
 
 print(tree.order)
 print(check_tree(tree))
+"""
 
+# TEST TRANSFER RIGHT
+tree = BTree(int, int)
+pair_type = np.dtype([("key", tree._key_type), ("value", tree._value_type)])
+print("a = ", tree._min_internal_num_children)
+
+root = Node(pair_type, tree._order)
+root.add_element(25, 3)
+tree._root = root
+
+left_child = Node(pair_type, tree._order)
+left_child.add_element(10, 66)
+left_child.add_element(15, 69)
+left_child.add_element(21, 69)
+root._struct[0]["children"][0] = left_child
+left_child.parent = root
+
+right_child = Node(pair_type, tree.order)
+right_child.add_element(28, 66)
+root._struct[0]["children"][1] = right_child
+right_child.parent = root
+
+left_grandchild1 = Node(pair_type, tree.order)
+left_grandchild1.add_element(7, 66)
+left_grandchild1.add_element(9, 66)
+left_child._struct[0]["children"][0] = left_grandchild1
+left_grandchild1.parent = left_child
+
+left_grandchild2 = Node(pair_type, tree.order)
+left_grandchild2.add_element(12, 66)
+left_child._struct[0]["children"][1] = left_grandchild2
+left_grandchild2.parent = left_child
+
+left_grandchild3 = Node(pair_type, tree.order)
+left_grandchild3.add_element(16, 66)
+left_child._struct[0]["children"][2] = left_grandchild3
+left_grandchild3.parent = left_child
+
+left_grandchild4 = Node(pair_type, tree.order)
+left_grandchild4.add_element(22, 66)
+left_grandchild4.add_element(23, 66)
+left_child._struct[0]["children"][3] = left_grandchild4
+left_grandchild4.parent = left_child
+
+tree._size += 11
+
+del tree[16]
 
 """
 tree = BTree(int, int)

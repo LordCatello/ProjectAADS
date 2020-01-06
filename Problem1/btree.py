@@ -5,7 +5,7 @@ from collections import MutableMapping
 from math import ceil
 from math import floor
 from typing import Tuple, Optional
-BLOCK_DIM = 256
+BLOCK_DIM = 0
 UINT = np.uint32
 POINTER_DIM = int(platform.architecture()[0][:2]) // 8
 
