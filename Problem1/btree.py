@@ -5,7 +5,7 @@ from collections import MutableMapping
 from math import ceil
 from math import floor
 from typing import Tuple, Optional
-BLOCK_DIM = 1024
+BLOCK_DIM = 256
 UINT = np.uint32
 POINTER_DIM = int(platform.architecture()[0][:2]) // 8
 
@@ -333,7 +333,17 @@ class BTree(MutableMapping):
         yield from self._iter_inorder(children[node.size])
 
     def __setitem__(self, k, v) -> None:
-        pass
+        """
+        Insert a new element in the tree.
+
+        Insert a new element in the tree if the tree does not contain the key k.
+        Otherwise update the element with the new value passed as parameter.
+
+        :param k:   the key of the element.
+        :param v:   the value of the element.
+        """
+
+        self._insert_item(k, v)
 
     def is_empty(self) -> bool:
         return self._size == 0
@@ -408,13 +418,14 @@ class BTree(MutableMapping):
         order = (remaining_dim + pair_dim) // (pair_dim + node_dim)
         return order
 
-    def insert_item(self, key, value):
+    def _insert_item(self, key, value):
         if self.is_empty():
             # create new node
             self._insert_new(key, value)
         else:
             # have to insert in proper position
             self._insert_existing(key, value)
+
 
     def _insert_new(self, key, value):
         # create new node
@@ -451,12 +462,13 @@ class BTree(MutableMapping):
                 # the given one, but it is neither greater, so we have that
                 # previous element in node has same key as given one
                 elements[i - 1]["value"] = value
-                print("chiave esistente")  # DEBUG
                 return None
 
 
     def _insert_existing(self, key, value):
         insert_at = self._insertion_point(key, value)
+
+        # I don't have to increment the size, because I update a previous value
         if insert_at is None:
             return
 
@@ -472,6 +484,8 @@ class BTree(MutableMapping):
             children.append(None)
 
         self._insert_new_element_in_a_node(key, value, insert_at, children)
+
+        self._size += 1
 
 
     def _insert_new_element_in_a_node(self, key, value, node: "Node", children: ["Node"]):
@@ -491,7 +505,7 @@ class BTree(MutableMapping):
             self._root.update_child(0, children[0])
             self._root.update_child(1, children[1])
         elif node.is_full():
-            _overflow(key, value, node, children)
+            self._overflow(key, value, node, children)
         else:
             node.add_element(key, value)
 
@@ -601,7 +615,7 @@ class BTree(MutableMapping):
             # node is the root
             # so the new children will be only the left and the right child
             new_children.append(left_node)
-            new_children(right_node)
+            new_children.append(right_node)
 
 
         self._insert_new_element_in_a_node(median_element[0], median_element[1], parent, new_children)

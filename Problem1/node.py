@@ -231,5 +231,7 @@ class Node:
 
     def update_child(self, index: int, node: "Node"):
         self._struct[0]["children"][index] = node
-        node.parent = self
+
+        if node is not None:
+            node.parent = self
 

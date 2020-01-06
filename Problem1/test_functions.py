@@ -31,7 +31,7 @@ def random_int() -> int:
     :return:    A random int value.
     """
 
-    return randint(0, 100)
+    return randint(0, 1000)
 
 
 def check_tree(tree: BTree) -> bool:
@@ -61,6 +61,8 @@ def check_tree(tree: BTree) -> bool:
     # children check
     b = tree.order
     a = tree.min_internal_num_children
+
+    # add also a check on the size
 
     return _check_a_b_property(a, b, tree.root)
 

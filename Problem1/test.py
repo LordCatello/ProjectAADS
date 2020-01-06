@@ -2,6 +2,8 @@ import numpy as np
 from btree import BTree
 from node import Node
 from test_functions import check_tree
+from test_functions import build_tree
+from test_functions import random_int
 
 """
 Test file
@@ -75,4 +77,8 @@ print(tree.before(element3, 1))
 """
 
 # use this function to build a tree
-# build_tree(100, int, int, random_int, random_int)
+tree = build_tree(1000, int, int, random_int, random_int)
+tree.inorder_vist()
+print(tree.__len__())
+print(tree.order)
+print(check_tree(tree))
