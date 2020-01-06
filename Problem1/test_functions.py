@@ -37,7 +37,7 @@ def random_int() -> int:
 def check_tree(tree: BTree) -> bool:
     """
     Checks if the tree is a BTree.
-    Return true if:
+    The tree is a BTree if:
     1) the tree is ordered (the in-order visit is correct)
     2) the keys are unique
     3) the size of the tree is correct
@@ -58,7 +58,11 @@ def check_tree(tree: BTree) -> bool:
     for el in tree.__iter__():
         if prec is not None:
             # the in-order visit is not correct if
-            if prec >= el["key"]:
+            if prec > el["key"]:
+                print("in-order not true")
+                return False
+            if prec == el["key"]:
+                print("keys not unique")
                 return False
 
         prec = el["key"]
@@ -67,6 +71,7 @@ def check_tree(tree: BTree) -> bool:
 
     # check the size
     if len(tree) != test_size:
+        print("size not correct")
         return False
 
     # children check
@@ -86,11 +91,13 @@ def _check_a_b_property(a: int, b: int, node: "Node") -> bool:
         return True
 
     if node.size > (b - 1):
+        print("b property not respected")
         return False
 
     # if the node is not the root
     if node.parent is not None:
         if node.size < (a - 1):
+            print("a property not respected")
             return False
 
     # check the property for all the children
