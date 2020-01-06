@@ -82,21 +82,11 @@ def delete_fusion_new_root():
     delete_and_print_list(tree, [1, 3])
     tear_down(tree)
 
-"""
+
 delete_fusion_new_root()
 delete_fusion_right_case()
 delete_transfer_right_case()
 delete_fusion_left_case()
 delete_transfer_left_case()
-"""
-
-tree = BTree(int, int)
-
-for i in range(20):
-    tree[i] = i + 1
-
-print(check_tree(tree))
-
-print(test_delete(tree, 30, True))
 
 

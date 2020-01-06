@@ -108,21 +108,7 @@ class Node:
         # index = np.searchsorted(self._struct[0]["elements"], key)
         index = self.find_element_index(key)
 
-        # If the node is full and I don't have to update an element
-        # I have to raise an exception
-        if index >= len(self._struct[0]["elements"]):
-            raise IndexError
-
-
-        # If the key is not present, I have to shift all the elements
-        if index == self.size or self._struct[0]["elements"][index]["key"] != key:
-            # Move all the elements greater than key and add the element to the index position.
-            for i in range(index, self.size):
-                self._struct[0]["elements"][self.size + index - i] = self._struct[0]["elements"][self.size + index - i - 1]
-            self.size = self.size + 1
-
-        # if the key is presents
-        self._struct[0]["elements"][index] = (key, value)
+        self.add_element_by_index(index, key, value)
 
 
     def find_element_index(self, key) -> int:
@@ -193,42 +179,6 @@ class Node:
 
         return self._struct[0]["children"][index]
 
-    def insert_at_position(self, position: UINT, element, left_child=None, right_child=None):
-        """
-        Inserts the given element in the given position, eventually by adding given children.
-
-        :param position:
-        :param element:
-        :param left_child:
-        :param right_child:
-        :return:
-        """
-        if (left_child and not right_child) or (right_child and not left_child):
-            raise TypeError("Left and right child must be both specified or both None")
-
-        if not left_child:
-            # nor right_child is specified
-            if not self.is_leaf():
-                raise TypeError("Cannot insert an item with no associated children in a non-leaf node")
-
-        if self.is_full():
-            raise Exception("Cannot insert an item in a full node")
-
-        # insert element
-        elements = self.elements
-        for i in range(self.size, position-1, -1):
-            elements[i+1] = elements[i]
-        elements[position] = element
-        self.size += 1
-
-        # if children are specified, insert them too
-        if left_child:
-            children = self.children
-            for i in range(self.size+1, position+1, -1):
-                children[i] = children[i-2]
-            children[position] = left_child
-            children[position+1] = right_child
-
     def get_index_from_parent(self) -> Optional[int]:
         """
         :return: the index of the parent's children array which points to this node or None if it has no
@@ -252,3 +202,19 @@ class Node:
         for i in range(self.size):
             print(self.elements[i],end='')
         print()
+
+
+    def add_element_by_index(self, index: int, key, value):
+        if index >= len(self._struct[0]["elements"]):
+            raise IndexError
+
+        # If the key is not present, I have to shift all the elements
+        if index == self.size or self._struct[0]["elements"][index]["key"] != key:
+            # Move all the elements greater than key and add the element to the index position.
+            for i in range(index, self.size):
+                self._struct[0]["elements"][self.size + index - i] = self._struct[0]["elements"][self.size + index - i - 1]
+            self.size = self.size + 1
+
+        # if the key is presents
+        self._struct[0]["elements"][index] = (key, value)
+
