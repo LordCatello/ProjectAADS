@@ -51,14 +51,14 @@ class BTree(MutableMapping):
             if current_node is None:
                 return current_node
             elif self.is_root(current_node):
-                self._size-=1
+                self._size = self._size - 1
                 if current_node.is_leaf():
                     current_node.remove_element_by_index(index)
                 else:
                     after_node, after_index = self._swap_with_successor(current_node, index)
                     return self.remove_item(after_node, after_index)
             else:
-                self._size -= 1
+                self._size = self._size - 1
                 if current_node.is_leaf():
                     if current_node.size > self.min_internal_num_children - 1:
                         return current_node.remove_element_by_index(index)
@@ -218,16 +218,19 @@ class BTree(MutableMapping):
                 """
     def transfer_left(self, parent, middle_index, current_node, index_to_remove, left_node):
         middle_element = parent.elements[middle_index]
+        max_left_element = left_node.remove_element_by_index(left_node.size - 1)
+        parent.elements[middle_index]=max_left_element
         removed = current_node.remove_element_by_index(index_to_remove)
-        parent.elements[middle_index - 1] = left_node.remove_element_by_index(left_node.size - 1)
-        current_node.add_element(middle_element['key'], middle_element['value'])
+        current_node.add_element(middle_element["key"], middle_element["value"])
         return removed
 
     def transfer_right(self, parent, middle_index, current_node, index_to_remove, right_node):
         middle_element = parent.elements[middle_index]
-        removed = current_node.remove_element_by_index(index_to_remove)
-        parent.elements[middle_index] = right_node.remove_element_by_index(0)
-        current_node.add_element(middle_element['key'], middle_element['value'])  # Maybe necessary do a add element at last position
+        min_right_element = right_node.remove_element_by_index(0)
+        parent.elements[middle_index] = min_right_element
+        removed = current_node.get_element_by_index(index_to_remove)
+        current_node.add_element(middle_element["key"],middle_element["value"])
+
         return removed
 
     def __getitem__(self, key):

@@ -239,6 +239,7 @@ class Node:
             node.parent = self
 
     def print_node(self):
-        for i in self.elements:
-            print(i,end='')
+
+        for i in range(self.size):
+            print(self.elements[i],end='')
         print()
