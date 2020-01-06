@@ -1,3 +1,0 @@
-Readme generator no save
-
-In pratica all'inizio del while più esterno mi ricreo il generator. Questo determina che, ogni qual volta torno su di un nodo dopo averne visitati altri ad esso collegati, viene creato un nuovo generator, quindi l'iterazione sugli archi riparte da capo, per cui non è molto efficiente. L'iterazione non riparte da capo nel caso in cui il nodo opposto all'arco che sto considerando rispetto al nodo corrente sia già stato visitato, perché non viene creato un generatore per tali nodi, quindi continuo ad usare il generatore creato sul nodo corrente.
