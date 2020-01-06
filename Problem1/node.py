@@ -113,16 +113,17 @@ class Node:
         if index >= len(self._struct[0]["elements"]):
             raise IndexError
 
+
         # If the key is not present, I have to shift all the elements
-        if self._struct[0]["elements"][index]["key"] != key:
+        if index == self.size or self._struct[0]["elements"][index]["key"] != key:
             # Move all the elements greater than key and add the element to the index position.
             for i in range(index, self.size):
-                self._struct[0]["elements"][self.size + index - i] = self._struct[0]["elements"][
-                    self.size + index - i - 1]
+                self._struct[0]["elements"][self.size + index - i] = self._struct[0]["elements"][self.size + index - i - 1]
             self.size = self.size + 1
 
-        # Insert the element in index
+        # if the key is presents
         self._struct[0]["elements"][index] = (key, value)
+
 
     def find_element_index(self, key) -> int:
         """
