@@ -159,8 +159,8 @@ class BTree(MutableMapping):
             new_node.add_element(left_node.get_element_by_index(i)["key"],left_node.get_element_by_index(i)["value"])
             new_node.children[counter] = left_node.children[i]
             counter += 1
-        #new_node.children[counter] = left_node.children[left_node.size+1]
-        #counter += 1
+        new_node.children[counter] = left_node.children[left_node.size]
+        counter += 1
 
         new_node.add_element(parent.get_element_by_index(middle_index)["key"],parent.get_element_by_index(middle_index)["value"])
 
@@ -168,10 +168,10 @@ class BTree(MutableMapping):
             element = current_node.get_element_by_index(i)
             if not (element['key'] == current_node.get_element_by_index(index_to_remove)['key']):
                 new_node.add_element(element["key"],element["value"])
-                new_node.children[counter]=current_node.children[i]
-                counter += 1
+            new_node.children[counter]=current_node.children[i]
+            counter += 1
 
-        # new_node.children[counter] = current_node.children[current_node.size + 1]
+        new_node.children[counter] = current_node.children[current_node.size]
 
         new_node.parent = parent
         parent.children[middle_index] = new_node
@@ -199,11 +199,11 @@ class BTree(MutableMapping):
             element = current_node.get_element_by_index(i)
             if not (element['key'] == current_node.get_element_by_index(index_to_remove)['key']):
                 new_node.add_element(element["key"],element["value"])
-                new_node.children[counter] = current_node.children[i]
-                counter += 1
+            new_node.children[counter] = current_node.children[i]
+            counter += 1
 
-        #new_node.children[counter] = current_node.children[current_node.size + 1]
-        #counter += 1
+        new_node.children[counter] = current_node.children[current_node.size]
+        counter += 1
         new_node.add_element(parent.get_element_by_index(middle_index)["key"],parent.get_element_by_index(middle_index)["value"])
 
         for i in range(right_node.size):
@@ -211,7 +211,7 @@ class BTree(MutableMapping):
             new_node.children[counter]=right_node.children[i]
             counter +=1
 
-        new_node.children[i] =right_node.children[right_node.size +1]
+        new_node.children[i] =right_node.children[right_node.size]
 
         new_node.parent = parent
         parent.children[middle_index] = new_node
