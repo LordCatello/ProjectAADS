@@ -226,7 +226,10 @@ class BTree(MutableMapping):
 
     def transfer_right(self, parent, middle_index, current_node, index_to_remove, right_node):
         middle_element = parent.elements[middle_index]
-        min_right_element = right_node.remove_element_by_index(0)
+        min_right_element = right_node.get_element_by_index(0)
+        print(min_right_element)
+        right_node.remove_element_by_index(0)
+        print(min_right_element)
         parent.elements[middle_index] = min_right_element
         removed = current_node.get_element_by_index(index_to_remove)
         current_node.add_element(middle_element["key"],middle_element["value"])

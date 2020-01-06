@@ -86,20 +86,19 @@ print(check_tree(tree))
 """
 
 tree = BTree(int,int)
+
 print(tree.order)
 print(tree.min_internal_num_children)
 print(len(tree))
-tree[1]=5
+
 for i in range(50):
     tree[i]=i+1
+
 tree.graphic_dump()
-
-
-
-i=0
-print(check_tree(tree))
 
 
 del(tree[5])
-
+del(tree[4])
 tree.graphic_dump()
+print(check_tree(tree))
+

@@ -82,9 +82,10 @@ class Node:
 
     def remove_element_by_index(self, index):
 
-        removed = self.elements[index]
+        removed = np.copy(self.elements[index])
         for i in range(index, self.size):
-            self.elements[index] = self.elements[index + 1]
+            self.elements[i] = self.elements[i + 1]
+
         self.size = self.size - 1
         return removed
 
@@ -165,6 +166,7 @@ class Node:
         # the given one, or node.size if all the elements in the node have key
         # <= to the given key
         elements = self.elements
+        i = 0
         for i in range(self.size):
             if elements[i]["key"] > key:
                 return i
