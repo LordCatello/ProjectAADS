@@ -60,35 +60,33 @@ class BTree(MutableMapping):
             current_node, index, current_index_from_parent = self._get_node_and_index(key)
 
             if current_node is None:
-                return current_node
+                raise KeyError
             elif self.is_root(current_node):
                 self._size = self._size - 1
                 if current_node.is_leaf():
                     current_node.remove_element_by_index(index)
                 else:
-                    after_node, after_index = self._swap_with_successor(current_node, index)
-                    return self.remove_item(after_node, after_index)
+                    after_node, after_index, successor_index_from_parent = self._swap_with_successor(current_node, index)
+                    return self.remove_item(after_node, after_index, successor_index_from_parent)
             else:
                 self._size = self._size - 1
                 if current_node.is_leaf():
                     if current_node.size > self.min_internal_num_children - 1:
                         return current_node.remove_element_by_index(index)
                     else:
-                        return self._delete_underflow(current_node,index)
+                        return self._delete_underflow(current_node,index, current_node.get_index_from_parent())
                 else:
-                    after_node,after_index=self._swap_with_successor(current_node,index)
-                    return self.remove_item(after_node,after_index)
-
+                    after_node,after_index, successor_index_from_parent =self._swap_with_successor(current_node,index)
+                    return self.remove_item(after_node,after_index, successor_index_from_parent)
 
     def _swap_with_successor(self,current_node,index):
-        after_node, after_index, index_from_parent = self.after_node_index(current_node, index)
+        after_node, after_index, successor_index_from_parent = self.after_node_index(current_node, index)
         to_remove = current_node.get_element_by_index(index)
         current_node.elements[index] = after_node.get_element_by_index(after_index)
         after_node.elements[after_index] = to_remove
-        return (after_node,after_index)
+        return (after_node,after_index, successor_index_from_parent)
 
-
-    def _delete_underflow(self, node: Node, index_to_delete):
+    def _delete_underflow(self, node: Node, index_to_delete, index_from_parent):
         """
         Deletes the element if it's not a naive case.
         It firstly tries to make a transfer, otherwise it makes a fusion of nodes.
@@ -100,8 +98,6 @@ class BTree(MutableMapping):
         """
         # can a transfer be executed?
         parent = node.parent
-        index_from_parent = node.get_index_from_parent()
-
 
         if index_from_parent is None:
             # node is the root
@@ -111,9 +107,8 @@ class BTree(MutableMapping):
             else:
                 # in this case the root is empty and has only one child
                 # so the child becomes the new root
-                self._root=node.children[0]
+                self._root = node.children[0]
                 return
-
 
         right_sibling, left_sibling = None, None
 
@@ -134,15 +129,13 @@ class BTree(MutableMapping):
         if left_sibling is not None:
             removed = node.get_element_by_index(index_to_delete)
             self.fusion_left(parent, index_from_parent - 1, node, index_to_delete, left_sibling)
-            self.remove_item(parent, index_from_parent - 1)
+            self.remove_item(parent, index_from_parent - 1, parent.get_index_from_parent())
             return removed
         elif right_sibling is not None:
             removed = node.get_element_by_index(index_to_delete)
             self.fusion_right(parent, index_from_parent, node, index_to_delete, right_sibling)
-            self.remove_item(parent,index_from_parent)
+            self.remove_item(parent,index_from_parent, parent.get_index_from_parent())
             return removed
-
-
 
     def fusion_left(self,parent, middle_index, current_node, index_to_remove, left_node):
         print("Fusion left")
@@ -163,7 +156,6 @@ class BTree(MutableMapping):
             parent.children[i] = parent.children[i + 1]
         parent.children[parent.size] = None
 
-
     def fusion_right(self,parent, middle_index, current_node, index_to_remove, right_node):
         print("Fusion right")
         pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
@@ -183,11 +175,11 @@ class BTree(MutableMapping):
             parent.children[i] = parent.children[i + 1]
         parent.children[parent.size] = None
 
-    def remove_item(self, node, index):
+    def remove_item(self, node, index, index_from_parent):
         if node.size > self.min_internal_num_children - 1:
             return node.remove_element_by_index(index)
         else:
-            return self._delete_underflow(node,index)
+            return self._delete_underflow(node,index, index_from_parent)
 
     def transfer_left(self, parent, middle_index, current_node, index_to_remove, left_node):
         middle_element = parent.get_element_by_index(middle_index)
@@ -233,6 +225,8 @@ class BTree(MutableMapping):
         return self._size
 
     def is_root(self, node: Node) -> bool:
+        if node is None:
+            return False
         return node == self._root and node.is_root()
 
     def _get_node_and_index(self, key) -> Tuple[Optional[Node], Optional[int], Optional[int]]:
@@ -326,6 +320,9 @@ class BTree(MutableMapping):
 
          For each node, the size of the node and the array of elements are printed.
         """
+
+        if self.is_empty():
+            return
 
         queue = Queue()
         queue.put(self._root)
@@ -659,50 +656,6 @@ class BTree(MutableMapping):
 
         self._insert_new_element_in_a_node(median_element[0], median_element[1], parent, new_children)
 
-
-    """
-    def _split_and_insert(self, key, value, node: Node, left_child: Node, right_child: Node, pos: UINT):
-        # Check that both children are specified or none is
-        if (not left_child and (right_child or pos)) or (not right_child and (left_child or pos)):
-            raise TypeError("left_child, right_child and pos must be all None or all specified")
-
-            # Remove the node from parent's children, saving the index -> DO THIS WHEN INSERTING INSTEAD
-            parent = node.parent()
-            parent_children = parent.chidren()
-            index_in_parent = 0
-            for child in parent_children:
-                if child is node:
-                    child = None
-                    break
-                index_in_parent += 1
-            # Remove median from node
-            median_index = floor(node.size()/2)
-            elements = node.elements()
-            median = elements[median_index]  # it's pair_type
-            # Create new node
-            pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
-            new_right_child = Node(pair_type, self._order)
-            # If new element's key is greater than median's key, insert it
-            # as first element of the new node
-            if key > node.children()[median_index]["key"]:
-                new_right_child.add_element(key, value)
-            # Move elements greater than the median to new node
-            for i in range(median_index + 1, node.size()):
-                new_right_child.add_element(elements[i]["key"], elements[i]["value"])
-                node._struct[0]["size"] -= 1
-            # If new element's key is smaller than median's key, insert it
-            # in place of the median
-            if key < node.children()[median_index]["key"]:
-                node.children()[median_index]["key"] = key
-                node.children()[median_index]["value"] = value
-
-
-            if key > node.children()[median_index]["key"]:
-                # accounts for median removal
-                node._struct[0]["size"] -= 1
-            # insert a call to a function that inserts an element and associated left and right child and pos
-            # into the tree (pos in index_in_parent)
-        """
 
 
 
