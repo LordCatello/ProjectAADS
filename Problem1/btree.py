@@ -665,50 +665,6 @@ class BTree(MutableMapping):
         self._insert_new_element_in_a_node(median_element[0], median_element[1], parent, new_children)
 
 
-    """
-    def _split_and_insert(self, key, value, node: Node, left_child: Node, right_child: Node, pos: UINT):
-        # Check that both children are specified or none is
-        if (not left_child and (right_child or pos)) or (not right_child and (left_child or pos)):
-            raise TypeError("left_child, right_child and pos must be all None or all specified")
-
-            # Remove the node from parent's children, saving the index -> DO THIS WHEN INSERTING INSTEAD
-            parent = node.parent()
-            parent_children = parent.chidren()
-            index_in_parent = 0
-            for child in parent_children:
-                if child is node:
-                    child = None
-                    break
-                index_in_parent += 1
-            # Remove median from node
-            median_index = floor(node.size()/2)
-            elements = node.elements()
-            median = elements[median_index]  # it's pair_type
-            # Create new node
-            pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
-            new_right_child = Node(pair_type, self._order)
-            # If new element's key is greater than median's key, insert it
-            # as first element of the new node
-            if key > node.children()[median_index]["key"]:
-                new_right_child.add_element(key, value)
-            # Move elements greater than the median to new node
-            for i in range(median_index + 1, node.size()):
-                new_right_child.add_element(elements[i]["key"], elements[i]["value"])
-                node._struct[0]["size"] -= 1
-            # If new element's key is smaller than median's key, insert it
-            # in place of the median
-            if key < node.children()[median_index]["key"]:
-                node.children()[median_index]["key"] = key
-                node.children()[median_index]["value"] = value
-
-
-            if key > node.children()[median_index]["key"]:
-                # accounts for median removal
-                node._struct[0]["size"] -= 1
-            # insert a call to a function that inserts an element and associated left and right child and pos
-            # into the tree (pos in index_in_parent)
-        """
-
 
 
 
