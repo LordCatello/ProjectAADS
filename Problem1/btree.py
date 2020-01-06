@@ -220,6 +220,9 @@ class BTree(MutableMapping):
         :return:        The value corresponding to the key, if the key is found.
         :raise:         KeyError if the value is not found.
         """
+        if key is None:
+            raise TypeError("Key can't be none")
+
         node, index, _ = self._get_node_and_index(key)
         if node is None or index is None:
             raise KeyError
