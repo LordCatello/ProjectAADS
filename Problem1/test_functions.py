@@ -41,14 +41,13 @@ def check_tree(tree: BTree) -> bool:
     1) the tree is ordered (the in-order visit is correct)
     2) the keys are unique
     3) the size of the tree is correct
-    4) each internal node has at most order children and at least min_number_children
+    4) each internal node has at most "order" children and at least min_number_children
+    5) the depth property is correct. All the leaves are at the same level.
     
     :param tree:    The tree on which the check is performed.
     :return:        Return true if the tree is a BTree.
                     False otherwise.
     """
-
-    is_btree = True
 
     # in-order check
     # and
@@ -80,7 +79,86 @@ def check_tree(tree: BTree) -> bool:
 
     # add also a check on the size
 
+    # check the depth property
+    is_correct = _check_depth(tree)
+
+    if not is_correct:
+        print("depth property not respected")
+        return False
+
     return _check_a_b_property(a, b, tree.root)
+
+
+def _check_depth(tree: BTree) -> bool:
+    """
+    Check the depth property of a tree.
+
+    Check if all the leaves are at the same level.
+
+    :param tree     The tree.
+
+    :return         True if the depth property is correct.
+                    False otherwise.
+    """
+
+    node = tree.root
+
+    # if the tree has got no nodes, the property is correct
+    if node is None:
+        return True
+
+    # find the level of a leaf
+    level = 0
+    is_leaf = False
+
+    while not is_leaf:
+        # if all the children are None node is a leaf
+        # otherwise I continue to search in another child
+        children = node.children
+        is_leaf = True
+
+        # for all the children
+        for i in range(node.size + 1):
+            if children[i] is not None:
+                level += 1
+                node = children[i]
+                is_leaf = False
+                break
+
+    # now I found the level of a leaf
+    # I have to check if all the leaves are on the same level that I found
+    return _check_depth_recursive(tree.root, level, 0)
+
+
+def _check_depth_recursive(node: Node, threshold: int, level: int) -> bool:
+    """
+
+    """
+    if node is None:
+        return True
+
+    # if level > threshold I can stop here even if the node is not a leaf
+    # because surely all the leaves that are children of this node
+    # will not respect the property
+    if level > threshold:
+        return False
+
+    is_leaf = True
+    children = node.children
+
+    for i in range(node.size + 1):
+        if children[i] is not None:
+            is_leaf = False
+            is_correct = _check_depth_recursive(children[i], threshold, level + 1)
+            if not is_correct:
+                return False
+
+    if is_leaf and threshold != level:
+            return False
+
+    return True
+
+
 
 
 def _check_a_b_property(a: int, b: int, node: "Node") -> bool:

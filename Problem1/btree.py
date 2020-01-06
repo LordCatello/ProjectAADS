@@ -5,9 +5,12 @@ from collections import MutableMapping
 from math import ceil
 from math import floor
 from typing import Tuple, Optional
+
 from queue import Queue
 
+
 BLOCK_DIM = 256
+
 UINT = np.uint32
 POINTER_DIM = int(platform.architecture()[0][:2]) // 8
 
@@ -95,27 +98,28 @@ class BTree(MutableMapping):
         if node.size >= self._min_internal_num_children - 1:  # tree restored
             return
         """
-
         # can a transfer be executed?
         parent = node.parent
         index_from_parent = node.get_index_from_parent()
 
-        """
+
         if index_from_parent is None:
             # node is the root
             if node.size > 1:
                 node.remove_element_by_index(index_to_delete)
                 return
             else:
+                # in this case the root is empty and has only one child
+                # so the child becomes the new root
                 self._root=node.children[0]
                 return
-        """
+
 
         right_sibling, left_sibling = None, None
 
         if index_from_parent - 1 >= 0:
             left_sibling = parent.children[index_from_parent - 1]
-        if index_from_parent + 1 < parent.size:
+        if index_from_parent + 1 < parent.size + 1:
             right_sibling = parent.children[index_from_parent + 1]
 
         if left_sibling is not None and left_sibling.size >= self._min_internal_num_children:
@@ -123,19 +127,18 @@ class BTree(MutableMapping):
             return self.transfer_left(parent, index_from_parent - 1, node, index_to_delete, left_sibling)
 
         if right_sibling is not None and right_sibling.size >= self._min_internal_num_children:
-            print("Transfer l")
+            print("Transfer right")
             return self.transfer_right(parent, index_from_parent, node, index_to_delete, right_sibling)
 
         # no! a fusion is necessary
         if left_sibling is not None:
             removed = node.get_element_by_index(index_to_delete)
             self.fusion_left(parent, index_from_parent - 1, node, index_to_delete, left_sibling)
-            self.__delitem__(parent.get_element_by_index(index_from_parent)["key"])
+            self.remove_item(parent, index_from_parent - 1)
             return removed
         elif right_sibling is not None:
             removed = node.get_element_by_index(index_to_delete)
             self.fusion_right(parent, index_from_parent, node, index_to_delete, right_sibling)
-            print(parent.get_element_by_index(index_from_parent)["key"])
             self.remove_item(parent,index_from_parent)
             return removed
 
@@ -154,9 +157,11 @@ class BTree(MutableMapping):
                 new_node.add_element(element["key"],element["value"])
         new_node.parent = parent
         # parent.update_children()
+        print(middle_index)
         parent.children[middle_index] = new_node
         for i in range(middle_index + 1, parent.size):
             parent.children[i] = parent.children[i + 1]
+        parent.children[parent.size] = None
 
 
     def fusion_right(self,parent, middle_index, current_node, index_to_remove, right_node):
@@ -172,11 +177,11 @@ class BTree(MutableMapping):
             new_node.add_element(right_node.get_element_by_index(i)["key"],right_node.get_element_by_index(i)["value"])
         new_node.parent = parent
         # parent.update_children()
-        for i in range(middle_index, parent.size):
-            if i == middle_index:
-                parent.children[i] = new_node
-            else:
-                parent.children[i] = parent.children[i + 1]
+        print(middle_index)
+        parent.children[middle_index] = new_node
+        for i in range(middle_index + 1, parent.size):
+            parent.children[i] = parent.children[i + 1]
+        parent.children[parent.size] = None
 
     def remove_item(self, node, index):
         if node.size > self.min_internal_num_children - 1:
