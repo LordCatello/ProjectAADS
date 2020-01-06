@@ -93,16 +93,15 @@ print(tree.order)
 print(tree.min_internal_num_children)
 print(len(tree))
 
+
 for i in range(50):
     tree[i]=i+1
 
-tree.graphic_dump()
-
-
-del(tree[5])
-del(tree[4])
-tree.graphic_dump()
 print(check_tree(tree))
+
+tree.graphic_dump()
+
+
 
 
 tree.graphic_dump()
