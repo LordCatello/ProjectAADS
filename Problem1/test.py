@@ -5,6 +5,7 @@ from test_functions import check_tree
 from test_functions import build_tree
 from test_functions import random_int
 from test_functions import test_delete
+import tester
 
 """
 Test file
@@ -13,13 +14,12 @@ Test file
 
 STANDARD_DIMENSION = 21
 
-"""
+
 def set_up(dim):
     tree = create_tree(dim)
     print("start tree:")
     tree.dump_level()
     return tree
-
 
 def tear_down(tree):
     if check_tree(tree):
@@ -27,17 +27,14 @@ def tear_down(tree):
     else:
         print("The tree is NOT a correct B-Tree!")
 
-
 def delete_and_print_list(tree, key_list):
     for key in key_list:
         delete_and_print(tree, key)
-
 
 def delete_and_print(tree, key):
     del tree[key]
     print("Deleted {}:".format(key))
     tree.dump_level()
-
 
 def create_tree(dim):
     tree = BTree(int, int)
@@ -50,7 +47,6 @@ def create_tree(dim):
     print(tree.min_internal_num_children)
 
     return tree
-
 
 def delete_transfer_right_case():
     tree = set_up(STANDARD_DIMENSION)
@@ -82,22 +78,22 @@ def delete_fusion_new_root():
     delete_and_print_list(tree, [1, 3])
     tear_down(tree)
 
+"""
+In this module the main functionalities of our BTree implementation are presented,
+like examples of transfer to the left, to the right, fusion to the left or to the right.
+In the tester module also the other interface methods are tested. 
+
+This tests have been run with BLOCK_DIM = 0, in this case the BTree was a (2,4)-Tree,
+but changing the dimension of the memory block and the types of keys and values, the order
+of the BTree is dynamically computed.
+"""
 
 delete_fusion_new_root()
 delete_fusion_right_case()
 delete_transfer_right_case()
 delete_fusion_left_case()
 delete_transfer_left_case()
-"""
 
-
-tree = BTree(int, int)
-
-for i in range(20):
-    tree[i] = i + 1
-
-print(check_tree(tree))
-
-print(test_delete(tree, 30, True))
+tester.run_tester()
 
 

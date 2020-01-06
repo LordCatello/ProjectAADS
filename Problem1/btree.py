@@ -128,11 +128,9 @@ class BTree(MutableMapping):
             right_sibling = parent.children[index_from_parent + 1]
 
         if left_sibling is not None and left_sibling.size >= self._min_internal_num_children:
-            print("Transfer left")
             return self.transfer_left(parent, index_from_parent - 1, node, index_to_delete, left_sibling)
 
         if right_sibling is not None and right_sibling.size >= self._min_internal_num_children:
-            print("Transfer right")
             return self.transfer_right(parent, index_from_parent, node, index_to_delete, right_sibling)
 
         # no! a fusion is necessary
@@ -154,7 +152,6 @@ class BTree(MutableMapping):
         :param left_node: the left sibling that has to be merged with the current node
         :return:
         """
-        print("Fusion left")
         pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
         new_node = Node(pair_type, self.order)
         counter = 0
@@ -194,7 +191,6 @@ class BTree(MutableMapping):
         :param right_node: the right sibling that has to be merged with the current node
         :return:
         """
-        print("Fusion right")
         pair_type = np.dtype([("key", self._key_type), ("value", self._value_type)])
         new_node = Node(pair_type, self.order)
         counter = 0
@@ -386,7 +382,6 @@ class BTree(MutableMapping):
 
     def _dump(self,node):
         if node is not None:
-            print("I am  node")
             node.print_node()
             for child in node.children:
                 self._dump(child)
