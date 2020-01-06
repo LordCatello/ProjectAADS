@@ -108,6 +108,7 @@ class BTree(MutableMapping):
                 # in this case the root is empty and has only one child
                 # so the child becomes the new root
                 self._root = node.children[0]
+                self._root.parent = None
                 return
 
         right_sibling, left_sibling = None, None
@@ -149,8 +150,6 @@ class BTree(MutableMapping):
             if not (element['key'] == current_node.get_element_by_index(index_to_remove)['key']):
                 new_node.add_element(element["key"],element["value"])
         new_node.parent = parent
-        # parent.update_children()
-        print(middle_index)
         parent.children[middle_index] = new_node
         for i in range(middle_index + 1, parent.size):
             parent.children[i] = parent.children[i + 1]
@@ -168,8 +167,6 @@ class BTree(MutableMapping):
         for i in range(right_node.size):
             new_node.add_element(right_node.get_element_by_index(i)["key"],right_node.get_element_by_index(i)["value"])
         new_node.parent = parent
-        # parent.update_children()
-        print(middle_index)
         parent.children[middle_index] = new_node
         for i in range(middle_index + 1, parent.size):
             parent.children[i] = parent.children[i + 1]
@@ -183,7 +180,6 @@ class BTree(MutableMapping):
 
     def transfer_left(self, parent, middle_index, current_node, index_to_remove, left_node):
         middle_element = parent.get_element_by_index(middle_index)
-        print(middle_element)
         max_left_element = left_node.remove_element_by_index(left_node.size - 1)
         parent.elements[middle_index]=max_left_element
         removed = current_node.remove_element_by_index(index_to_remove)
@@ -212,6 +208,10 @@ class BTree(MutableMapping):
         :return:        The value corresponding to the key, if the key is found.
         :raise:         KeyError if the value is not found.
         """
+
+        if tree.root is None:
+          raise KeyError
+
         node, index, _ = self._get_node_and_index(key)
         if node is None or index is None:
             raise KeyError
@@ -227,6 +227,7 @@ class BTree(MutableMapping):
     def is_root(self, node: Node) -> bool:
         if node is None:
             return False
+
         return node == self._root and node.is_root()
 
     def _get_node_and_index(self, key) -> Tuple[Optional[Node], Optional[int], Optional[int]]:

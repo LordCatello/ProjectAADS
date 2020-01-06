@@ -105,6 +105,9 @@ def _check_depth(tree: BTree) -> bool:
                     False otherwise.
     """
 
+    # this is partially correct.
+    # we have to modify it
+
     node = tree.root
 
     # if the tree has got no nodes, the property is correct
@@ -222,12 +225,10 @@ def test_delete(tree: BTree, number_of_deletes: int, debug: bool) -> bool:
     for element in tree:
         elements.append(deepcopy(element))
 
-    if debug:
-        print("Starting list: ", elements)
-
     for i in range(total_elements_to_remove):
         if debug:
-            print("Iteration: {}\nList: {}".format(i, elements))
+            print("Iteration number i: ", i)
+            tree.dump_level()
 
         # change a random element from the list
         index = randint(0, len(elements) - 1)
@@ -236,6 +237,7 @@ def test_delete(tree: BTree, number_of_deletes: int, debug: bool) -> bool:
         # delete element from tree
         if debug:
             print("Deleting item with key: ", element["key"])
+
         del tree[element["key"]]
 
         # check if the item has been effectively removed
@@ -243,12 +245,16 @@ def test_delete(tree: BTree, number_of_deletes: int, debug: bool) -> bool:
             tree.__getitem__(element["key"])
             print("the item associated to key: ", element["key"], " has not been deleted")
             # If the key is found, return false
+            if debug:
+                tree.dump_level()
             return False
         except:
             pass
 
         # check the tree
         if not check_tree(tree):
+            if debug:
+                tree.dump_level()
             return False
 
     return True
