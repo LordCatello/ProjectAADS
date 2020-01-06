@@ -12,6 +12,8 @@ Test file
 """
 
 """
+=======
+>>>>>>> e005e18acf1da57f4d642ca34ee3ef3674ae082a
 tree = BTree(int, int)
 
 for i in range(21):
@@ -20,6 +22,7 @@ for i in range(21):
 print(check_tree(tree))
 tree.dump_level()
 
+<<<<<<< HEAD
 print("delete 0")
 del tree[0]
 print(check_tree(tree))
@@ -47,9 +50,6 @@ for i in range(20):
 print(check_tree(tree))
 
 print(test_delete(tree, 30))
-
-
-
 
 
 
