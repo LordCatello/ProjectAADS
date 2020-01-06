@@ -49,7 +49,7 @@ for i in range(20):
 
 print(check_tree(tree))
 
-print(test_delete(tree, 30))
+print(test_delete(tree, 30, True))
 
 
 

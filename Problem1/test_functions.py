@@ -190,7 +190,7 @@ def _check_a_b_property(a: int, b: int, node: "Node") -> bool:
     return True
 
 
-def test_delete(tree: BTree, number_of_deletes: int) -> bool:
+def test_delete(tree: BTree, number_of_deletes: int, debug: bool) -> bool:
     """
     Tests number_of_deletes "deletes" in the tree.
     The elements to delete are chosen randomly.
@@ -205,6 +205,8 @@ def test_delete(tree: BTree, number_of_deletes: int) -> bool:
 
     :param tree                 Tree.
     :param number_of_deletes    Number of elements to delete.
+    :param debug                If debug is True, some debug prints are made
+                                Otherwise only the failure cause will be printed.
 
     :return:                    True if all the deletes are correct (i.e. all the specified elements have been removed and check_tree() is True)
                                 False otherwise
@@ -226,21 +228,22 @@ def test_delete(tree: BTree, number_of_deletes: int) -> bool:
         element = deepcopy(elements.pop(index))
 
         # delete element from tree
+        if debug:
+            print("Deleting item with key: ", element["key"])
         tree.__delitem__(element["key"])
-
-        # check the tree
-        if not check_tree(tree):
-            return False
 
         # check if the item has been effectively removed
         try:
             tree.__getitem__(element["key"])
-            print("the key is not deleted")
+            print("the item associated to key: ", element["key"], " has not been deleted")
             # If the key is found, return false
             return False
         except:
             pass
 
+        # check the tree
+        if not check_tree(tree):
+            return False
 
     return True
 
