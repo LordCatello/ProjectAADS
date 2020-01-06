@@ -105,7 +105,7 @@ class BTree(MutableMapping):
 
         if index_from_parent - 1 >= 0:
             left_sibling = parent.children[index_from_parent - 1]
-        if index_from_parent + 1 < parent.size:
+        if index_from_parent + 1 < parent.size + 1:
             right_sibling = parent.children[index_from_parent + 1]
 
         if left_sibling is not None and left_sibling.size >= self._min_internal_num_children:
@@ -113,7 +113,7 @@ class BTree(MutableMapping):
             return self.transfer_left(parent, index_from_parent - 1, node, index_to_delete, left_sibling)
 
         if right_sibling is not None and right_sibling.size >= self._min_internal_num_children:
-            print("Transfer left")
+            print("Transfer right")
             return self.transfer_right(parent, index_from_parent, node, index_to_delete, right_sibling)
 
         # no! a fusion is necessary

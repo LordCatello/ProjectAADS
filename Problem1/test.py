@@ -156,6 +156,24 @@ for i in range(20):
 print(check_tree(tree))
 tree.dump_level()
 
+tree.__delitem__(9)
+print(check_tree(tree))
+tree.dump_level()
+
+tree.__delitem__(10)
+print(check_tree(tree))
+tree.dump_level()
+
+tree.__delitem__(15)
+print(check_tree(tree))
+tree.dump_level()
+
+
+tree.__delitem__(16)
+print(check_tree(tree))
+tree.dump_level()
+
+
 
 
 """
