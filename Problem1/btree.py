@@ -468,26 +468,31 @@ class BTree(MutableMapping):
         If the given key is already in the tree, it substitutes its value with the given one. Otherwise,
         it returns the node in which the (key,value) pair must be inserted.
 
-        :param key: the key to be inserted as new element in the tree.
-        :param value: the value to be associated with the given key.
-        :return: None if the key is already in the tree, or the node in which it must be inserted.
+        :param key:         the key to be inserted as new element in the tree.
+        :param value:       the value to be associated with the given key.
+        :return:            None if the key is already in the tree, or the node in which it must be inserted.
         """
-        start = self._root
+        node = self._root
 
         while True:
-            i = start.ceil_in_node(key)  # get the index of the smallest key in the node > the given one
-            elements = start.elements
-            children = start.children
-            if i == 0 or elements[i - 1]["key"] < key:
-                if children[i] is None:
-                    return start
-                start = children[i]
-            else:
-                # i is != 0 and the previous element's key is not smaller than
-                # the given one, but it is neither greater, so we have that
-                # previous element in node has same key as given one
-                elements[i - 1]["value"] = value
-                return None
+            i = node.find_element_index(key)
+
+            if i < node.size:
+                element = node.get_element_by_index(i)
+
+                # If I found the element
+                if element["key"] == key:
+                    node.add_element(key, value)
+                    return None
+
+            # If I am here, I didnt' find the element
+            # If the correct child is not None, I have to explore the child
+            # Otherwise I have to return the current node
+            child = node.children[i]
+            if child is None:
+                return node
+
+            node = child
 
 
     def _insert_existing(self, key, value):

@@ -39,7 +39,9 @@ def check_tree(tree: BTree) -> bool:
     Checks if the tree is a BTree.
     Return true if:
     1) the tree is ordered (the in-order visit is correct)
-    2) each internal node has at most order children and at least min_number_children
+    2) the keys are unique
+    3) the size of the tree is correct
+    4) each internal node has at most order children and at least min_number_children
     
     :param tree:    The tree on which the check is performed.
     :return:        Return true if the tree is a BTree.
@@ -49,14 +51,23 @@ def check_tree(tree: BTree) -> bool:
     is_btree = True
 
     # in-order check
+    # and
+    # check if the keys are unique
+    test_size = 0
     prec = None
     for el in tree.__iter__():
         if prec is not None:
-            # the in-order visit is not correct
-            if prec > el["key"]:
+            # the in-order visit is not correct if
+            if prec >= el["key"]:
                 return False
 
         prec = el["key"]
+
+        test_size += 1
+
+    # check the size
+    if len(tree) != test_size:
+        return False
 
     # children check
     b = tree.order

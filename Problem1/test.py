@@ -81,9 +81,11 @@ print(tree.before(element3, 1))
 tree = build_tree(1000, int, int, random_int, random_int)
 tree.inorder_vist()
 print(tree.__len__())
+# tree.graphic_dump()
 print(tree.order)
 print(check_tree(tree))
 """
+
 
 tree = BTree(int,int)
 
@@ -101,4 +103,7 @@ del(tree[5])
 del(tree[4])
 tree.graphic_dump()
 print(check_tree(tree))
+
+
+tree.graphic_dump()
 
