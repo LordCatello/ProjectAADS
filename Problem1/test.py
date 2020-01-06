@@ -134,7 +134,11 @@ left_grandchild4.parent = left_child
 
 tree._size += 11
 
-del tree[16]
+tree.dump_level()
+
+print(check_tree(tree))
+
+#del tree[16]
 
 """
 
